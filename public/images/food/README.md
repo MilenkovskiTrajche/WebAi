@@ -1,0 +1,1 @@
+Place verified, optimized food photographs here. Menu item images are optional and are not currently rendered in the paper viewer. Do not use an image as evidence of the actual dish without restaurant approval.
