@@ -1,0 +1,202 @@
+import { test, expect } from "@playwright/test";
+for (const width of [320, 375, 390, 393, 430, 768, 1024, 1440]) {
+  test(`responsive routes and menu at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    for (const path of ["/", "/menu", "/privacy", "/not-a-page"]) {
+      await page.goto(path);
+      await expect(page.locator("h1")).toBeVisible();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      ).toBe(true);
+    }
+    await page.goto("/menu");
+    await expect(page.locator(".menu-spread > .menu-page")).toHaveCount(
+      width >= 900 ? 2 : 1,
+    );
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({
+      animations: "disabled",
+      path: `tmp/menu-${width}.png`,
+      fullPage: true,
+    });
+    await page.getByRole("button", { name: "Next pages", exact: true }).click();
+    await expect(page.locator(".page-status")).toContainText(
+      width >= 900 ? "3" : "2",
+    );
+    await page
+      .getByRole("button", { name: "Previous pages", exact: true })
+      .click();
+    await expect(page.locator(".page-status")).toContainText("1");
+    await page.getByRole("button", { name: "Zoom in", exact: true }).click();
+    await expect(page.locator(".zoom-value")).toHaveText("115%");
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.getByRole("button", { name: "More menu options" }).click();
+    await page.getByRole("menuitem", { name: "Reset zoom" }).click();
+    await expect(page.locator(".zoom-value")).toHaveText("100%");
+    await page
+      .getByRole("button", { name: "Raise a glass", exact: true })
+      .click();
+    await expect(page.locator(".menu-spread")).toContainText("Espresso");
+    expect(errors).toEqual([]);
+  });
+}
+test("languages, matching downloads, overflow focus, keyboard and price privacy", async ({
+  page,
+}) => {
+  await page.goto("/menu");
+  await page
+    .getByRole("region", { name: "Interactive restaurant menu" })
+    .focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator(".page-status")).toContainText("3");
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator(".page-status")).toContainText("1");
+  for (const [lang, label, download] of [
+    ["en", "More menu options", "Download menu (PDF)"],
+    ["mk", "Повеќе опции за менито", "Преземи мени (PDF)"],
+    ["de", "Weitere Menüoptionen", "Speisekarte herunterladen (PDF)"],
+  ]) {
+    await page.locator(".tools select").selectOption(lang);
+    await expect(page.locator("html")).toHaveAttribute("lang", lang);
+    const button = page.getByRole("button", { name: label });
+    await button.click();
+    const link = page.getByRole("menuitem", { name: download });
+    await expect(link).toBeFocused();
+    await expect(link).toHaveAttribute("href", `/menu/menu-${lang}.pdf`);
+    const [file] = await Promise.all([
+      page.waitForEvent("download"),
+      link.click(),
+    ]);
+    expect(file.suggestedFilename()).toBe(`restaurant-menu-${lang}.pdf`);
+    expect(await file.failure()).toBeNull();
+    await button.click();
+    await page.keyboard.press("Escape");
+    await expect(button).toBeFocused();
+    await expect(page.getByRole("menu")).toHaveCount(0);
+    await button.click();
+    await page.locator("h1").click();
+    await expect(page.getByRole("menu")).toHaveCount(0);
+    expect(await page.locator(".menu-spread").innerHTML()).not.toMatch(
+      /ден\.|MKD|price/,
+    );
+  }
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "de");
+});
+test("mobile navigation, swipe, allergen legend and reduced motion", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    locale: "en-US",
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  await page
+    .locator("#navigation")
+    .getByRole("link", { name: "The menu" })
+    .click();
+  await expect(page.locator("h1")).toHaveText("The menu");
+  const viewer = page.locator(".book-viewport");
+  await viewer.dispatchEvent("touchstart", {
+    touches: [{ identifier: 1, clientX: 300, clientY: 400 }],
+  });
+  await viewer.dispatchEvent("touchend", {
+    changedTouches: [{ identifier: 1, clientX: 70, clientY: 403 }],
+  });
+  await expect(page.locator(".page-status")).toContainText("2");
+  await expect(page.locator(".turning-sheet")).toHaveCount(0);
+  await page.locator("summary").click();
+  await expect(
+    page.getByText("Please speak with our team", { exact: false }),
+  ).toBeVisible();
+  await context.close();
+});
+test("browser language detection and unsupported fallback", async ({
+  browser,
+}) => {
+  for (const [locale, expected] of [
+    ["mk-MK", "mk"],
+    ["de-DE", "de"],
+    ["fr-FR", "en"],
+  ]) {
+    const context = await browser.newContext({ locale });
+    const page = await context.newPage();
+    await page.goto("/menu");
+    await expect(page.locator("html")).toHaveAttribute("lang", expected);
+    await context.close();
+  }
+});
+test("static deployment responses and accessibility", async ({ page }) => {
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  for (const path of ["/", "/menu", "/privacy", "/missing-page"]) {
+    const response = await page.goto(path);
+    expect(response?.status()).toBe(path === "/missing-page" ? 404 : 200);
+    await page.locator("h1").waitFor();
+    const report = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(report.violations).toEqual([]);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/menu");
+  await page.getByRole("button", { name: "More menu options" }).click();
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+});
+test("homepage visual inspection captures", async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({
+      path: `tmp/home-${width}.png`,
+      fullPage: true,
+      animations: "disabled",
+    });
+  }
+});
+test("all languages fit small phones and tablet at maximum text zoom", async ({
+  page,
+}) => {
+  for (const width of [320, 390, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/menu");
+    for (const language of ["mk", "en", "de"]) {
+      await page.locator(".tools select").selectOption(language);
+      for (let i = 0; i < 3; i++)
+        await page.locator(".zoom-controls .icon-button").last().click();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      for (const category of await page.locator(".category-nav button").all()) {
+        await category.click();
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= innerWidth,
+          ),
+        ).toBe(true);
+      }
+      await page.locator(".zoom-value").click();
+    }
+  }
+});

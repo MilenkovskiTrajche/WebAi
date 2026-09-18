@@ -1,9 +1,103 @@
-import { useEffect, useRef, useState } from 'react';
-import { MoreVertical, Download, RotateCcw } from 'lucide-react';
-import { useLanguage } from '../../i18n/LanguageContext';
-import { pdfFilename } from './layout';
-export function MenuOverflowMenu({reset}:{reset:()=>void}){const {t,language}=useLanguage();const [open,setOpen]=useState(false);const ref=useRef<HTMLDivElement>(null);const button=useRef<HTMLButtonElement>(null);const first=useRef<HTMLAnchorElement>(null);
- const close=()=>{setOpen(false);button.current?.focus();};
- useEffect(()=>{if(!open)return;first.current?.focus();const outside=(e:PointerEvent)=>{if(!ref.current?.contains(e.target as Node))setOpen(false);};document.addEventListener('pointerdown',outside);return()=>document.removeEventListener('pointerdown',outside);},[open]);
- return <div className="overflow" ref={ref} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setOpen(false);}} onKeyDown={e=>{if(e.key==='Escape'){e.stopPropagation();close();}if(open&&['ArrowDown','ArrowUp','Home','End'].includes(e.key)){e.preventDefault();e.stopPropagation();const items=Array.from(ref.current!.querySelectorAll<HTMLElement>('[role="menuitem"]'));const current=items.indexOf(document.activeElement as HTMLElement);const next=e.key==='Home'?0:e.key==='End'?items.length-1:(current+(e.key==='ArrowDown'?1:-1)+items.length)%items.length;items[next].focus();}}}><button className="icon-button" aria-label={t.more} aria-haspopup="menu" aria-expanded={open} aria-controls="menu-options" ref={button} onClick={()=>setOpen(!open)} onKeyDown={e=>{if(e.key==='ArrowDown'){e.preventDefault();e.stopPropagation();setOpen(true);}}}><MoreVertical size={21}/></button>{open&&<div id="menu-options" className="overflow-panel" role="menu" aria-label={t.more}><a ref={first} role="menuitem" href={`/menu/${pdfFilename(language)}`} download={`restaurant-${pdfFilename(language)}`} onClick={close}><Download size={17}/>{t.download}</a><button role="menuitem" onClick={()=>{reset();close();}}><RotateCcw size={17}/>{t.reset}</button></div>}</div>;
+import { useEffect, useRef, useState } from "react";
+import { MoreVertical, Download, RotateCcw } from "lucide-react";
+import { useLanguage } from "../../i18n/LanguageContext";
+import { pdfFilename } from "./layout";
+export function MenuOverflowMenu({ reset }: { reset: () => void }) {
+  const { t, language } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  const first = useRef<HTMLAnchorElement>(null);
+  const close = () => {
+    setOpen(false);
+    button.current?.focus();
+  };
+  useEffect(() => {
+    if (!open) return;
+    first.current?.focus();
+    const outside = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", outside);
+    return () => document.removeEventListener("pointerdown", outside);
+  }, [open]);
+  return (
+    <div
+      className="overflow"
+      ref={ref}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          e.stopPropagation();
+          close();
+        }
+        if (open && ["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) {
+          e.preventDefault();
+          e.stopPropagation();
+          const items = Array.from(
+            ref.current!.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+          );
+          const current = items.indexOf(document.activeElement as HTMLElement);
+          const next =
+            e.key === "Home"
+              ? 0
+              : e.key === "End"
+                ? items.length - 1
+                : (current + (e.key === "ArrowDown" ? 1 : -1) + items.length) %
+                  items.length;
+          items[next].focus();
+        }
+      }}
+    >
+      <button
+        className="icon-button"
+        aria-label={t.more}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-controls="menu-options"
+        ref={button}
+        onClick={() => setOpen(!open)}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            e.stopPropagation();
+            setOpen(true);
+          }
+        }}
+      >
+        <MoreVertical size={21} />
+      </button>
+      {open && (
+        <div
+          id="menu-options"
+          className="overflow-panel"
+          role="menu"
+          aria-label={t.more}
+        >
+          <a
+            ref={first}
+            role="menuitem"
+            href={`/menu/${pdfFilename(language)}`}
+            download={`restaurant-${pdfFilename(language)}`}
+            onClick={close}
+          >
+            <Download size={17} />
+            {t.download}
+          </a>
+          <button
+            role="menuitem"
+            onClick={() => {
+              reset();
+              close();
+            }}
+          >
+            <RotateCcw size={17} />
+            {t.reset}
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }

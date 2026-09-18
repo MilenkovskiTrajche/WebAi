@@ -1,0 +1,31 @@
+# Content required before launch
+
+The current site uses **Bezisten as a working name**, original architectural illustrations and a clearly marked demonstration menu. The only supplied restaurant facts are: established in 1992, historic Bezisten in Bitola, beside the Dragor River and a view toward Saat Kula. All other business fields remain null. Search indexing is disabled until configuration is approved.
+
+- [ ] Verified restaurant name (`src/config/restaurant.ts`)
+- [ ] Authentic restaurant logo (replace the temporary arch mark)
+- [ ] Exact address
+- [ ] Phone number, with international dialling code
+- [ ] Verified Google Maps URL
+- [ ] Opening hours, including any seasonal variations
+- [ ] Restaurant photographs with usage permission
+- [ ] Food photographs with usage permission, if desired
+- [ ] Final menu categories
+- [ ] Final menu items
+- [ ] Ingredients for every dish
+- [ ] Gram weights / serving volumes
+- [ ] Verified allergens and cross-contact guidance for every dish
+- [ ] Prices for the printable menu and confirmed currency
+- [ ] Approved Macedonian translations
+- [ ] Approved English translations
+- [ ] Approved German translations
+- [ ] Authentic Google reviews, source links and approval to quote (optional; hidden when empty)
+- [ ] Production domain
+- [ ] Social sharing image and permission to use it
+- [ ] Privacy contact, legal business identity and hosting privacy details
+- [ ] Physical printed proof approved by the restaurant
+- [ ] Real-phone and screen-reader acceptance check
+- [ ] Set `nameIsPlaceholder: false` and `sampleMenu: false` only after approval
+- [ ] Rebuild, confirm canonical/schema/sitemap and deploy the approved content
+
+Contact links and opening hours appear automatically when configured. No made-up reviews, phone numbers, addresses or social profiles are published. Keep the sample notice in place until the data is approved.

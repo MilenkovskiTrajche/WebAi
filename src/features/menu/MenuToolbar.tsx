@@ -1,6 +1,73 @@
-import { ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
-import { useLanguage } from '../../i18n/LanguageContext';
-import { LanguageSelector } from '../../components/LanguageSelector';
-import { MenuOverflowMenu } from './MenuOverflowMenu';
-interface Props {page:number;count:number;step:number;turn:(direction:number)=>void;zoom:number;setZoom:(zoom:number)=>void}
-export function MenuToolbar({page,count,step,turn,zoom,setZoom}:Props){const {t}=useLanguage();return <div className="menu-toolbar"><div className="page-controls"><button className="icon-button" aria-label={t.previous} disabled={page===0} onClick={()=>turn(-1)}><ChevronLeft size={20}/></button><span className="page-status" aria-live="polite">{t.page} {page+1}{step===2&&page+1<count?`–${page+2}`:''} <span>{t.of} {count}</span></span><button className="icon-button" aria-label={t.next} disabled={page+step>=count} onClick={()=>turn(1)}><ChevronRight size={20}/></button></div><div className="tools"><div className="zoom-controls"><button className="icon-button" aria-label={t.zoomOut} disabled={zoom<=85} onClick={()=>setZoom(Math.max(85,zoom-15))}><Minus size={17}/></button><button className="zoom-value" aria-label={t.reset} onClick={()=>setZoom(100)}>{zoom}%</button><button className="icon-button" aria-label={t.zoomIn} disabled={zoom>=145} onClick={()=>setZoom(Math.min(145,zoom+15))}><Plus size={17}/></button></div><LanguageSelector/><MenuOverflowMenu reset={()=>setZoom(100)}/></div></div>;}
+import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { useLanguage } from "../../i18n/LanguageContext";
+import { LanguageSelector } from "../../components/LanguageSelector";
+import { MenuOverflowMenu } from "./MenuOverflowMenu";
+interface Props {
+  page: number;
+  count: number;
+  step: number;
+  turn: (direction: number) => void;
+  zoom: number;
+  setZoom: (zoom: number) => void;
+}
+export function MenuToolbar({ page, count, step, turn, zoom, setZoom }: Props) {
+  const { t } = useLanguage();
+  return (
+    <div className="menu-toolbar">
+      <div className="page-controls">
+        <button
+          className="icon-button"
+          aria-label={t.previous}
+          disabled={page === 0}
+          onClick={() => turn(-1)}
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <span className="page-status" aria-live="polite">
+          {t.page} {page + 1}
+          {step === 2 && page + 1 < count ? `–${page + 2}` : ""}{" "}
+          <span>
+            {t.of} {count}
+          </span>
+        </span>
+        <button
+          className="icon-button"
+          aria-label={t.next}
+          disabled={page + step >= count}
+          onClick={() => turn(1)}
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+      <div className="tools">
+        <div className="zoom-controls">
+          <button
+            className="icon-button"
+            aria-label={t.zoomOut}
+            disabled={zoom <= 85}
+            onClick={() => setZoom(Math.max(85, zoom - 15))}
+          >
+            <Minus size={17} />
+          </button>
+          <button
+            className="zoom-value"
+            aria-label={t.reset}
+            onClick={() => setZoom(100)}
+          >
+            {zoom}%
+          </button>
+          <button
+            className="icon-button"
+            aria-label={t.zoomIn}
+            disabled={zoom >= 145}
+            onClick={() => setZoom(Math.min(145, zoom + 15))}
+          >
+            <Plus size={17} />
+          </button>
+        </div>
+        <LanguageSelector />
+        <MenuOverflowMenu reset={() => setZoom(100)} />
+      </div>
+    </div>
+  );
+}
