@@ -45,7 +45,7 @@ E2E tests run against a production build, so run `npm run build` first. They lau
 
 ### Web and print separation
 
-Web items display dish name, ingredients, weight and accessible allergen icons. **No price is read by the web item renderer**, including hidden markup. Data and downloadable PDFs are intentionally public, so prices are not secrets. Print items include a fixed right-hand price box from the same numeric `price` field. Web and print share the generated category/page grouping. Print adds a right-hand price column and a final allergen legend. The PDF generator still guards against overflow for unusually long future entries.
+Web items display dish name, ingredients, weight and accessible allergen icons. **No price is read by the web item renderer**, including hidden markup. Data and downloadable PDFs are intentionally public, so prices are not secrets. Print items include a fixed right-hand price box from the same numeric `price` field. Web and print share the generated category/page grouping. Print adds an unnumbered branded cover, a right-hand price column and a final allergen legend. The PDF generator still guards against overflow for unusually long future entries.
 
 ### Menu interaction
 
@@ -109,3 +109,9 @@ git push -u origin content/update-menu
 ```
 
 Origin: `https://github.com/MilenkovskiTrajche/WebAi.git`. Never force-push. Keep generated PDFs with their matching content commit. CI in `.github/workflows/verify.yml` repeats validation and checks PDF output is current.
+
+## Brand identity
+
+The original stone-arch symbol and outlined heritage wordmark live in `public/branding/`. Open `/branding/` for all four variants, small-size previews and downloads. See `public/branding/README.md` for usage and font licenses. `src/components/Logo.tsx` supplies accessible reusable logos and the reduced-motion-aware lazy-menu loading mark; `src/config/brand.ts` shares asset paths and colors. Header, footer and menu introduction use the same identity; the removed story section stays removed.
+
+Run `npm run generate:branding` after editing `scripts/generate-branding.mjs`, then rebuild to update the vector PDF covers and inner-page marks. Production build regenerates both assets and PDFs. Each language currently has seven PDF pages: an unnumbered cover, five dish pages and an allergen legend. The favicon is a simplified architectural mark. No external fonts or raster images are embedded in the SVGs.

@@ -3,29 +3,7 @@ import { Menu, X, ArrowUpRight } from "lucide-react";
 import { restaurant } from "../config/restaurant";
 import { useLanguage } from "../i18n/LanguageContext";
 import { LanguageSelector } from "./LanguageSelector";
-export function Logo() {
-  return (
-    <a href="/" className="logo" aria-label={restaurant.name}>
-      <svg
-        viewBox="0 0 48 48"
-        width="39"
-        height="39"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M7 41V21a17 17 0 0 1 34 0v20M14 41V22a10 10 0 0 1 20 0v19M21 41V23a3 3 0 0 1 6 0v18M4 41h40"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
-      </svg>
-      <span>
-        {restaurant.name}
-        <small>BITOLA · {restaurant.established}</small>
-      </span>
-    </a>
-  );
-}
+import { Logo } from "./Logo";
 export function Layout({ children }: { children: ReactNode }) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -55,7 +33,7 @@ export function Layout({ children }: { children: ReactNode }) {
         {t.skip}
       </a>
       <header className="header" ref={header}>
-        <Logo />
+        <Logo linked />
         <nav
           id="navigation"
           className={open ? "navigation is-open" : "navigation"}
@@ -85,7 +63,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <footer>
         <div className="footer-main">
           <div>
-            <Logo />
+            <Logo linked variant="monochrome" />
             <p>{t.footer}</p>
           </div>
           <nav aria-label={t.menu}>

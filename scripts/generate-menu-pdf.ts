@@ -1,6 +1,8 @@
 import PDFDocument from "pdfkit";
+import SVGtoPDF from "svg-to-pdfkit";
+import { brand } from "../src/config/brand";
 import { createWriteStream } from "node:fs";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { menu } from "../src/data/menu";
 import { categories } from "../src/data/categories";
@@ -25,6 +27,10 @@ const ink = "#233d32",
   muted = "#626253";
 export async function generatePDF(language: Language) {
   await mkdir("public/menu", { recursive: true });
+  const [logoSvg, markSvg] = await Promise.all([
+    readFile(`public${brand.primary}`, "utf8"),
+    readFile(`public${brand.mark}`, "utf8"),
+  ]);
   const doc = new PDFDocument({
     size: "A4",
     margin: 45,
@@ -45,7 +51,8 @@ export async function generatePDF(language: Language) {
   let y = 0;
   const newPage = () => {
     doc.addPage();
-    doc.fillColor(ink).font("serif").fontSize(24).text(restaurant.name, 45, 40);
+    SVGtoPDF(doc, markSvg, 45, 35, { width: 24, height: 30, assumePt: true });
+    doc.fillColor(ink).font("serif").fontSize(14).text(restaurant.name, 80, 43);
     doc
       .font("sans")
       .fontSize(7)
@@ -81,6 +88,45 @@ export async function generatePDF(language: Language) {
     doc.text(title, 45, y, { width: 505, align: "center" });
     y += height + 27;
   };
+  // The SVG cover remains vector all the way to print; outlined lettering has no font dependency.
+  // It is unnumbered, so inner menu pages retain their existing web page numbers.
+  doc.addPage();
+  doc.rect(45, 45, 505, 707).lineWidth(0.7).strokeColor("#cfc8b8").stroke();
+  SVGtoPDF(doc, logoSvg, 100, 190, {
+    width: 395,
+    height: 146.71,
+    assumePt: true,
+  });
+  doc
+    .font("sans")
+    .fontSize(11)
+    .fillColor(brand.dark)
+    .text(t.traditionalRestaurant, 65, 366, { width: 465, align: "center" });
+  doc
+    .fontSize(9)
+    .fillColor(muted)
+    .text(t.place, 65, 393, { width: 465, align: "center" });
+  doc
+    .moveTo(224, 440)
+    .lineTo(280, 440)
+    .strokeColor(gold)
+    .lineWidth(0.7)
+    .stroke();
+  doc.moveTo(315, 440).lineTo(371, 440).stroke();
+  doc.path("M297.5 435L302.5 440L297.5 445L292.5 440Z").fill(brand.copper);
+  doc
+    .font("serif")
+    .fontSize(34)
+    .fillColor(brand.dark)
+    .text(t.menuCoverTitle, 65, 477, { width: 465, align: "center" });
+  doc
+    .font("sans")
+    .fontSize(8)
+    .fillColor(muted)
+    .text(t.since, 65, 634, { width: 465, align: "center" });
+  doc
+    .fontSize(7)
+    .text(restaurant.name, 65, 720, { width: 465, align: "center" });
   // Keep category grouping and page order identical to the web book.
   // Printing adds the price column and a final full allergen legend.
   for (const page of paginate(menu, categories)) {
@@ -171,7 +217,7 @@ export async function generatePDF(language: Language) {
     y += 31;
   }
   const range = doc.bufferedPageRange();
-  for (let index = 0; index < range.count; index++) {
+  for (let index = 1; index < range.count; index++) {
     doc.switchToPage(index);
     doc
       .moveTo(45, 762)
@@ -187,7 +233,7 @@ export async function generatePDF(language: Language) {
         width: 445,
         lineBreak: false,
       });
-    doc.text(`${index + 1} / ${range.count}`, 505, 774, {
+    doc.text(`${index} / ${range.count - 1}`, 505, 774, {
       width: 45,
       align: "right",
       lineBreak: false,

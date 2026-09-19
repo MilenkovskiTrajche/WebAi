@@ -1,3 +1,4 @@
+import { Logo } from "../components/Logo";
 import MenuBook from "../features/menu/MenuBook";
 import { useLanguage } from "../i18n/LanguageContext";
 import { restaurant } from "../config/restaurant";
@@ -6,8 +7,9 @@ export default function Menu() {
   return (
     <main id="main" className="menu-main">
       <div className="menu-heading">
+        <Logo className="menu-cover-logo" />
         <p className="eyebrow">
-          {t.place} <span> / </span> {restaurant.established}
+          {t.traditionalRestaurant} · {t.place}
         </p>
         <h1>{t.menu}</h1>
         <p>{t.menuSubtitle}</p>

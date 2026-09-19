@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { describe, it, expect } from "vitest";
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { languages } from "../src/features/menu/types";
 import { restaurant } from "../src/config/restaurant";
 import { categories } from "../src/data/categories";
@@ -22,10 +22,15 @@ describe("generated printable PDFs", () => {
       const doc = await task.promise;
       let text = "";
       const webPages = paginate(menu, categories);
-      expect(doc.numPages).toBe(webPages.length + 1);
+      expect(doc.numPages).toBe(webPages.length + 2);
       for (let index = 1; index <= doc.numPages; index++) {
         const page = await doc.getPage(index);
         const content = await page.getTextContent();
+        if (index === 1) {
+          const ops = await page.getOperatorList();
+          expect(ops.fnArray).not.toContain(OPS.paintImageXObject);
+          expect(ops.fnArray).not.toContain(OPS.paintInlineImageXObject);
+        }
         text +=
           content.items
             .filter((i) => "str" in i)
@@ -35,14 +40,18 @@ describe("generated printable PDFs", () => {
           .filter((i) => "str" in i)
           .map((i) => ("str" in i ? i.str : ""))
           .join(" ");
-        if (index <= webPages.length) {
-          for (const item of webPages[index - 1].sections.flatMap(
+        if (index > 1 && index <= webPages.length + 1) {
+          for (const item of webPages[index - 2].sections.flatMap(
             (s) => s.items,
           )) {
             expect(pageText).toContain(localize(item.name, language));
           }
         }
         expect(pageText).toContain(restaurant.name);
+        if (index === 1) {
+          expect(pageText).toContain(strings[language].menuCoverTitle);
+          expect(pageText).toContain(strings[language].traditionalRestaurant);
+        }
         expect(pageText).not.toContain(strings[language].draft);
         // No numeric allergen codes; PDF contains actual vector pictograms instead.
         expect(

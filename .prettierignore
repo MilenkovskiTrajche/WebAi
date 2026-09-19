@@ -7,3 +7,7 @@ public/images
 package-lock.json
 playwright-report
 test-results
+
+public/branding/*.svg
+public/branding/FONT-LICENSE-*.txt
+public/favicon.svg

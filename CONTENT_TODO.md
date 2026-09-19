@@ -3,7 +3,7 @@
 The owner confirmed **Trajche Bezisten**, an old-town kafana, and requested the same current menu for web and table use without demonstration labels. The hero is an explicitly labeled AI illustration of an imagined old Bitola scene. Dishes still originate from the initial example dataset; no independent recipe/allergen verification has been supplied. Confirm their accuracy as part of the menu review below.
 
 - [x] Verified restaurant name (`src/config/restaurant.ts`)
-- [ ] Authentic restaurant logo (replace the temporary arch mark)
+- [x] Original architectural SVG identity and reusable variants (`public/branding/`)
 - [ ] Exact address
 - [ ] Phone number, with international dialling code
 - [ ] Verified Google Maps URL

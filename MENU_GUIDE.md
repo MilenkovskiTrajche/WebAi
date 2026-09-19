@@ -41,7 +41,7 @@ Change `restaurant.currency` in `src/config/restaurant.ts`. The numeric values m
 
 ## Styling
 
-Web colors/fonts are tokens at the start of `src/styles/main.css`; `.menu-page`, `.dish` and the page-turn rules control the paper presentation. Zoom is relative text sizing. PDF fonts, A4 dimensions, margins, row measurements and price boxes are in `scripts/generate-menu-pdf.ts`. PDFs and web share page grouping and icon artwork. Print adds a right-hand price column and a final allergen legend.
+Web colors/fonts are tokens at the start of `src/styles/main.css`; `.menu-page`, `.dish` and the page-turn rules control the paper presentation. Zoom is relative text sizing. PDF fonts, A4 dimensions, margins, row measurements and price boxes are in `scripts/generate-menu-pdf.ts`. PDFs and web share page grouping and icon artwork. Print adds an unnumbered vector-logo cover, a right-hand price column and a final allergen legend. Inner pages use the small architectural mark. The cover does not change the shared dish-page numbering. Branding assets and regeneration instructions are in `public/branding/README.md`.
 
 ## Regenerate and verify
 

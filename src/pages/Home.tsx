@@ -1,5 +1,6 @@
 import { ArrowRight, ArrowUpRight, MapPin } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { LogoMark } from "../components/Logo";
 import { restaurant, reviews } from "../config/restaurant";
 export default function Home() {
   const { t } = useLanguage();
@@ -62,9 +63,7 @@ export default function Home() {
           {t.explore}
           <ArrowUpRight size={18} />
         </a>
-        <span className="invitation-mark" aria-hidden="true">
-          B
-        </span>
+        <LogoMark decorative className="invitation-mark" />
       </section>
       {reviews.length > 0 && (
         <section className="reviews">

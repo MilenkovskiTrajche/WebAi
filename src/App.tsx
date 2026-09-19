@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Layout } from "./components/Layout";
+import { BrandLoading } from "./components/Logo";
 import Home from "./pages/Home";
 import { useLanguage } from "./i18n/LanguageContext";
 import { restaurant } from "./config/restaurant";
@@ -30,7 +31,7 @@ export default function App() {
           fallback={
             <main id="main" className="text-page">
               <h1>{t.menu}</h1>
-              <p>{t.empty}</p>
+              <BrandLoading />
             </main>
           }
         >

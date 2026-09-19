@@ -2,6 +2,8 @@ export const strings = {
   en: {
     home: "Home",
     menu: "The menu",
+    traditionalRestaurant: "Traditional Macedonian restaurant",
+    menuCoverTitle: "MENU",
     location: "Find us",
     privacy: "Privacy",
     language: "Language",
@@ -71,6 +73,8 @@ export const strings = {
   mk: {
     home: "Почетна",
     menu: "Менито",
+    traditionalRestaurant: "Традиционална македонска кафана",
+    menuCoverTitle: "МЕНИ",
     location: "Локација",
     privacy: "Приватност",
     language: "Јазик",
@@ -139,6 +143,8 @@ export const strings = {
   de: {
     home: "Startseite",
     menu: "Die Speisekarte",
+    traditionalRestaurant: "Traditionelles mazedonisches Restaurant",
+    menuCoverTitle: "SPEISEKARTE",
     location: "Anfahrt",
     privacy: "Datenschutz",
     language: "Sprache",

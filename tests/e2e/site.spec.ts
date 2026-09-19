@@ -208,7 +208,9 @@ test("turning sheet keeps both paper faces and the stationary page", async ({
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/menu");
   await expect(page.locator(".sample-note")).toHaveCount(0);
-  await expect(page.locator(".header .logo")).toContainText("Trajche Bezisten");
+  await expect(page.locator(".header .logo")).toHaveAccessibleName(
+    "Trajche Bezisten",
+  );
   await page.clock.install({ time: new Date("2026-09-19T00:00:00Z") });
   await page.clock.pauseAt(new Date("2026-09-19T00:00:01Z"));
   await page.getByRole("button", { name: "Next pages", exact: true }).click();
@@ -266,4 +268,70 @@ test("turning sheet keeps both paper faces and the stationary page", async ({
     "Eggs",
   );
   await expect(page.locator(".menu-spread .allergen").first()).toHaveText("");
+});
+
+test("brand assets stay sharp, accessible and proportional at mobile and desktop sizes", async ({
+  page,
+}) => {
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/");
+    const logo = page.locator(".header .brand-logo");
+    await expect(logo).toHaveAttribute("alt", "Trajche Bezisten");
+    const box = await logo.boundingBox();
+    expect(box!.width / box!.height).toBeCloseTo(560 / 208, 1);
+    expect(
+      await logo.evaluate(
+        (img: HTMLImageElement) => img.complete && img.naturalWidth > 0,
+      ),
+    ).toBe(true);
+    await expect(page.locator(".footer-main .brand-logo")).toHaveAttribute(
+      "src",
+      "/branding/logo-monochrome.svg",
+    );
+  }
+  await page.goto("/branding/");
+  await expect(page.locator("h1")).toHaveText("The stone doorway.");
+  for (const img of await page.locator("img").all())
+    expect(
+      await img.evaluate(
+        (el: HTMLImageElement) => el.complete && el.naturalWidth > 0,
+      ),
+    ).toBe(true);
+  await page.screenshot({ path: "tmp/brand-reference.png", fullPage: true });
+  await page.goto("/menu");
+  await expect(page.locator(".menu-cover-logo")).toHaveAttribute(
+    "src",
+    "/branding/logo-primary.svg",
+  );
+  await page.locator(".header .logo").click();
+  await expect(page).toHaveURL("http://127.0.0.1:4173/");
+});
+
+test("existing menu loading state draws the mark and respects reduced motion", async ({
+  page,
+}) => {
+  let release = () => {};
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route(/\/assets\/Menu-[^/]+\.js$/, async (route) => {
+    await gate;
+    await route.continue();
+  });
+  await page.goto("/menu", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("status")).toBeVisible();
+  await expect(page.locator(".draw-outer")).toHaveCSS(
+    "stroke-dasharray",
+    "1px",
+  );
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator(".brand-loading-drawing svg")).toBeHidden();
+  await expect(page.locator(".brand-loading .brand-mark")).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  release();
+  await expect(page.getByRole("status")).toHaveCount(0);
+  await expect(page.locator(".menu-spread")).toBeVisible();
 });
