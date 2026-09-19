@@ -63,7 +63,6 @@ export function Layout({ children }: { children: ReactNode }) {
           onClick={() => setOpen(false)}
         >
           <a href="/">{t.home}</a>
-          <a href="/#story">{t.story}</a>
           <a href="/#location">{t.location}</a>
           <a className="nav-menu" href="/menu">
             {t.menu}

@@ -18,8 +18,7 @@ export function AllergenIcon({
       aria-label={localize(allergen.name, language)}
       title={localize(allergen.name, language)}
     >
-      <Icon name={allergen.icon} size={14} />
-      <span aria-hidden="true">{allergen.code}</span>
+      <Icon name={allergen.icon} size={17} />
     </span>
   );
 }

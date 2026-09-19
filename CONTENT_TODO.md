@@ -1,8 +1,8 @@
 # Content required before launch
 
-The current site uses **Bezisten as a working name**, original architectural illustrations and a clearly marked demonstration menu. The only supplied restaurant facts are: established in 1992, historic Bezisten in Bitola, beside the Dragor River and a view toward Saat Kula. All other business fields remain null. Search indexing is disabled until configuration is approved.
+The owner confirmed **Trajche Bezisten**, an old-town kafana, and requested the same current menu for web and table use without demonstration labels. The hero is an explicitly labeled AI illustration of an imagined old Bitola scene. Dishes still originate from the initial example dataset; no independent recipe/allergen verification has been supplied. Confirm their accuracy as part of the menu review below.
 
-- [ ] Verified restaurant name (`src/config/restaurant.ts`)
+- [x] Verified restaurant name (`src/config/restaurant.ts`)
 - [ ] Authentic restaurant logo (replace the temporary arch mark)
 - [ ] Exact address
 - [ ] Phone number, with international dialling code
@@ -25,7 +25,7 @@ The current site uses **Bezisten as a working name**, original architectural ill
 - [ ] Privacy contact, legal business identity and hosting privacy details
 - [ ] Physical printed proof approved by the restaurant
 - [ ] Real-phone and screen-reader acceptance check
-- [ ] Set `nameIsPlaceholder: false` and `sampleMenu: false` only after approval
+- [x] Set `nameIsPlaceholder: false` and `sampleMenu: false` at the owner’s request
 - [ ] Rebuild, confirm canonical/schema/sitemap and deploy the approved content
 
-Contact links and opening hours appear automatically when configured. No made-up reviews, phone numbers, addresses or social profiles are published. Keep the sample notice in place until the data is approved.
+Contact links and opening hours appear automatically when configured. No made-up reviews, phone numbers, addresses or social profiles are published. The web and printable menu now use the regular restaurant footer.

@@ -20,7 +20,7 @@ This is an example, not a verified allergen declaration. Validate recipes and cr
 - **Ingredients/name**: edit all three `l(...)` values. A missing optional translation falls back to English.
 - **Weight**: change `"300 g"` (or a serving volume such as `"250 ml"`).
 - **Price**: change the numeric argument, without currency text. **Changing `price` changes the printable PDF but does NOT show the price on the web menu.** It also does not change web accessibility text or tooltips.
-- **Allergens**: use keys from `src/data/allergens.ts`. Keep an empty list only when verified. Central definitions include translated labels, visual icon keys and print badge numbers.
+- **Allergens**: use keys from `src/data/allergens.ts`. Keep an empty list only when verified. Central definitions include translated labels, shared visual icon keys (both the web and PDFs render the same SVG pictograms).
 - **Category**: change the category ID to an existing ID.
 - **Order**: lower numbers appear first inside their category. Leave gaps such as 10, 20, 30 for future additions.
 - **Optional fields**: full `MenuItem` records also support dietary labels and images; they are available for future presentation but currently omitted from the physical-paper layout.
@@ -41,7 +41,7 @@ Change `restaurant.currency` in `src/config/restaurant.ts`. The numeric values m
 
 ## Styling
 
-Web colors/fonts are tokens at the start of `src/styles/main.css`; `.menu-page`, `.dish` and the page-turn rules control the paper presentation. Zoom is relative text sizing. PDF fonts, A4 dimensions, margins, row measurements and price boxes are in `scripts/generate-menu-pdf.ts`. PDFs and web deliberately use different page layouts for readability.
+Web colors/fonts are tokens at the start of `src/styles/main.css`; `.menu-page`, `.dish` and the page-turn rules control the paper presentation. Zoom is relative text sizing. PDF fonts, A4 dimensions, margins, row measurements and price boxes are in `scripts/generate-menu-pdf.ts`. PDFs and web share page grouping and icon artwork. Print adds a right-hand price column and a final allergen legend.
 
 ## Regenerate and verify
 

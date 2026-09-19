@@ -25,33 +25,55 @@ export default function MenuBook() {
   const [zoom, setZoom] = useState(100);
   const [direction, setDirection] = useState(0);
   const [turnId, setTurnId] = useState(0);
-  const [turningPage, setTurningPage] = useState<number | null>(null);
+  const [turning, setTurning] = useState<{
+    from: number;
+    to: number;
+    desktop: boolean;
+  } | null>(null);
   const gesture = useRef<{ x: number; y: number } | null>(null);
   const step = desktop ? 2 : 1;
   const shown = desktop ? spreadForPage(page) : page;
   useEffect(() => {
     const query = window.matchMedia("(min-width: 900px)");
-    const update = () => setDesktop(query.matches);
+    const update = () => {
+      setDesktop(query.matches);
+      setTurning(null);
+    };
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
   useEffect(() => {
-    if (turningPage === null) return;
-    const timer = setTimeout(() => setTurningPage(null), 680);
+    if (turning === null) return;
+    const timer = setTimeout(() => setTurning(null), 920);
     return () => clearTimeout(timer);
-  }, [turningPage, turnId]);
-  const animate = (dir: number) => {
+  }, [turning, turnId]);
+  useEffect(() => {
+    setTurning(null);
+  }, [zoom, language]);
+  const animate = (dir: number, target: number) => {
     setDirection(dir);
     setTurnId((id) => id + 1);
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      setTurningPage(
-        dir > 0 ? Math.min(shown + step - 1, pages.length - 1) : shown,
-      );
+    const destination = desktop ? spreadForPage(target) : target;
+    if (
+      destination !== shown &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setTurning({ from: shown, to: destination, desktop });
+    } else setTurning(null);
   };
+  const renderPage = (index: number) =>
+    pages[index] ? (
+      <MenuPage page={pages[index]} index={index} language={language} />
+    ) : (
+      <div className="menu-page end-page">
+        <Icon name="utensils" size={36} />
+        <p>{t.footer}</p>
+      </div>
+    );
   const turn = (dir: number) => {
     const next = shown + dir * step;
     if (next < 0 || next >= pages.length) return;
-    animate(dir);
+    animate(dir, next);
     setPage(next);
   };
   if (!pages.length) return <p>{t.empty}</p>;
@@ -97,7 +119,7 @@ export default function MenuBook() {
               }
               onClick={() => {
                 const target = categoryMap[c.id];
-                animate(target < shown ? -1 : 1);
+                animate(target < shown ? -1 : 1, target);
                 setPage(target);
               }}
             >
@@ -133,7 +155,7 @@ export default function MenuBook() {
         }}
       >
         <div
-          className={`menu-spread ${desktop ? "two-pages" : "one-page"} ${direction === 0 ? "" : direction > 0 ? "turn-forward" : "turn-backward"}`}
+          className={`menu-spread ${desktop ? "two-pages" : "one-page"}`}
           key={`${shown}-${turnId}`}
           style={{ fontSize: `${zoom}%` }}
         >
@@ -152,19 +174,38 @@ export default function MenuBook() {
               </div>
             ))}
         </div>
-        {turningPage !== null && (
+        {turning && (
           <div
+            className="book-transition"
             key={turnId}
-            className={`turning-sheet ${desktop ? "desktop-sheet" : "mobile-sheet"} ${direction > 0 ? "sheet-forward" : "sheet-backward"}`}
             aria-hidden="true"
             inert
             style={{ fontSize: `${zoom}%` }}
           >
-            <MenuPage
-              page={pages[turningPage]}
-              index={turningPage}
-              language={language}
-            />
+            {turning.desktop && (
+              <div
+                className={`stationary-sheet ${direction > 0 ? "stationary-left" : "stationary-right"}`}
+              >
+                {renderPage(direction > 0 ? turning.from : turning.from + 1)}
+              </div>
+            )}
+            <div
+              className={`turning-sheet ${turning.desktop ? "desktop-sheet" : "mobile-sheet"} ${direction > 0 ? "sheet-forward" : "sheet-backward"}`}
+              onAnimationEnd={(e) => {
+                if (e.target === e.currentTarget) setTurning(null);
+              }}
+            >
+              <div className="sheet-face sheet-front">
+                {renderPage(
+                  turning.from + (turning.desktop && direction > 0 ? 1 : 0),
+                )}
+              </div>
+              <div className="sheet-face sheet-back">
+                {renderPage(
+                  turning.to + (turning.desktop && direction < 0 ? 1 : 0),
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>

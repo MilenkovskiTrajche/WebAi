@@ -6,17 +6,13 @@ import { menu } from "../src/data/menu";
 import { categories } from "../src/data/categories";
 import { allergens } from "../src/data/allergens";
 import { restaurant } from "../src/config/restaurant";
-import {
-  activeItems,
-  localize,
-  orderedCategories,
-  pdfFilename,
-} from "../src/features/menu/layout";
+import { paginate, localize, pdfFilename } from "../src/features/menu/layout";
 import {
   languages,
   type Language,
   type MenuItem,
 } from "../src/features/menu/types";
+import { drawMenuIcon } from "./draw-menu-icon";
 import { strings } from "../src/i18n/strings";
 export const formatPrice = (price: number) =>
   `${new Intl.NumberFormat("en-GB", { maximumFractionDigits: 2 }).format(price)} ${restaurant.currency.symbol}`;
@@ -66,106 +62,102 @@ export async function generatePDF(language: Language) {
       .stroke();
     y = 102;
   };
-  const heading = (name: string, continued = false) => {
-    doc.font("serif").fontSize(21).fillColor(ink);
+  const heading = (name: string, icon: string, continued = false) => {
+    drawMenuIcon(doc, icon, 285, y, 24);
+    doc
+      .moveTo(241, y + 12)
+      .lineTo(270, y + 12)
+      .strokeColor(gold)
+      .lineWidth(0.5)
+      .stroke();
+    doc
+      .moveTo(324, y + 12)
+      .lineTo(353, y + 12)
+      .stroke();
+    y += 36;
+    doc.font("serif").fontSize(23).fillColor(ink);
     const title = name + (continued ? ` (${t.continued})` : "");
-    const height = doc.heightOfString(title, { width: 505 });
-    doc.text(title, 45, y, { width: 505 });
-    y += height + 18;
+    const height = doc.heightOfString(title, { width: 505, align: "center" });
+    doc.text(title, 45, y, { width: 505, align: "center" });
+    y += height + 27;
   };
-  newPage();
-  for (const category of orderedCategories(categories)) {
-    const items = activeItems(menu, category.id);
-    if (!items.length) continue;
-    doc.font("serif").fontSize(21);
-    const headingHeight =
-      doc.heightOfString(localize(category.name, language), { width: 505 }) +
-      18;
-    doc.font("serif").fontSize(12);
-    const firstNameHeight = doc.heightOfString(
-      localize(items[0].name, language),
-      { width: 385 },
-    );
-    doc.font("sans").fontSize(8.5);
-    const firstHeight =
-      firstNameHeight +
-      doc.heightOfString(localize(items[0].ingredients, language), {
-        width: 385,
-        lineGap: 2,
-      }) +
-      48;
-    if (y + headingHeight + firstHeight > 735) newPage();
-    heading(localize(category.name, language));
-    for (const item of printItems(items)) {
-      const name = localize(item.name, language),
-        ingredients = localize(item.ingredients, language);
-      const width = 385;
-      doc.font("serif").fontSize(12);
-      const nameHeight = doc.heightOfString(name, { width });
-      doc.font("sans").fontSize(8.5);
-      const ingredientHeight = doc.heightOfString(ingredients, {
-        width,
-        lineGap: 2,
-      });
-      const height = nameHeight + ingredientHeight + 48;
-      if (height > 570)
-        throw new Error(
-          `Dish ${item.id} is too long for one print page; shorten its text.`,
-        );
-      if (y + height > 735) {
-        newPage();
-        heading(localize(category.name, language), true);
-      }
-      doc
-        .font("serif")
-        .fontSize(12)
-        .fillColor(ink)
-        .text(name, 45, y, { width });
-      doc
-        .font("sans")
-        .fontSize(8.5)
-        .fillColor(muted)
-        .text(ingredients, 45, y + nameHeight + 6, { width, lineGap: 2 });
-      const detailY = y + nameHeight + ingredientHeight + 16;
-      doc.fontSize(7).text(item.weight, 45, detailY);
-      let ax = 100;
-      for (const id of item.allergens) {
-        const allergen = allergens[id];
-        if (!allergen) throw new Error(`Unknown allergen: ${id}`);
+  // Keep category grouping and page order identical to the web book.
+  // Printing adds the price column and a final full allergen legend.
+  for (const page of paginate(menu, categories)) {
+    newPage();
+    for (const section of page.sections) {
+      const category = categories.find((c) => c.id === section.categoryId)!;
+      heading(
+        localize(category.name, language),
+        category.icon,
+        section.continued,
+      );
+      for (const item of printItems(section.items)) {
+        const name = localize(item.name, language),
+          ingredients = localize(item.ingredients, language);
+        const width = 385;
+        doc.font("serif").fontSize(12);
+        const nameHeight = doc.heightOfString(name, { width });
+        doc.font("sans").fontSize(8.5);
+        const ingredientHeight = doc.heightOfString(ingredients, {
+          width,
+          lineGap: 2,
+        });
+        const height = nameHeight + ingredientHeight + 48;
+        if (height > 570)
+          throw new Error(
+            `Dish ${item.id} is too long for one print page; shorten its text.`,
+          );
+        if (y + height > 735) {
+          newPage();
+          heading(localize(category.name, language), category.icon, true);
+        }
         doc
-          .roundedRect(ax, detailY - 2, 18, 13, 3)
-          .lineWidth(0.5)
-          .strokeColor(gold)
+          .font("serif")
+          .fontSize(12)
+          .fillColor(ink)
+          .text(name, 45, y, { width });
+        doc
+          .font("sans")
+          .fontSize(8.5)
+          .fillColor(muted)
+          .text(ingredients, 45, y + nameHeight + 6, { width, lineGap: 2 });
+        const detailY = y + nameHeight + ingredientHeight + 16;
+        doc.fontSize(7).text(item.weight, 45, detailY);
+        let ax = 100;
+        for (const id of item.allergens) {
+          const allergen = allergens[id];
+          if (!allergen) throw new Error(`Unknown allergen: ${id}`);
+          drawMenuIcon(doc, allergen.icon, ax, detailY - 3, 15);
+          ax += 23;
+        }
+        // All item prices use the same right-aligned box independent of description length.
+        doc
+          .rect(452, y - 4, 98, 34)
+          .lineWidth(0.6)
+          .strokeColor("#bdb198")
           .stroke();
         doc
-          .fontSize(6.5)
+          .font("sans")
+          .fontSize(10)
           .fillColor(ink)
-          .text(allergen.code, ax, detailY + 1, { width: 18, align: "center" });
-        ax += 23;
+          .text(item.formattedPrice, 456, y + 7, {
+            width: 90,
+            align: "center",
+          });
+        y += height;
+        doc
+          .moveTo(45, y - 13)
+          .lineTo(550, y - 13)
+          .lineWidth(0.4)
+          .strokeColor("#ded8ca")
+          .stroke();
       }
-      // All item prices use the same right-aligned box independent of description length.
-      doc
-        .rect(452, y - 4, 98, 34)
-        .lineWidth(0.6)
-        .strokeColor("#bdb198")
-        .stroke();
-      doc
-        .font("sans")
-        .fontSize(10)
-        .fillColor(ink)
-        .text(item.formattedPrice, 456, y + 7, { width: 90, align: "center" });
-      y += height;
-      doc
-        .moveTo(45, y - 13)
-        .lineTo(550, y - 13)
-        .lineWidth(0.4)
-        .strokeColor("#ded8ca")
-        .stroke();
+      y += 13;
     }
-    y += 13;
   }
   newPage();
-  heading(t.legend);
+  heading(t.legend, "leaf");
   doc
     .font("sans")
     .fontSize(9)
@@ -173,11 +165,8 @@ export async function generatePDF(language: Language) {
     .text(t.allergenNote, 45, y, { width: 505, lineGap: 3 });
   y = doc.y + 30;
   for (const allergen of Object.values(allergens)) {
-    doc.roundedRect(45, y, 23, 19, 3).strokeColor(gold).lineWidth(0.6).stroke();
-    doc
-      .fontSize(8)
-      .fillColor(ink)
-      .text(allergen.code, 45, y + 5, { width: 23, align: "center" });
+    drawMenuIcon(doc, allergen.icon, 45, y, 19);
+    doc.font("sans").fillColor(ink);
     doc.fontSize(10).text(localize(allergen.name, language), 82, y + 3);
     y += 31;
   }

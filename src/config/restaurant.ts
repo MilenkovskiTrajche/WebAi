@@ -1,7 +1,8 @@
-// TODO: Replace the working name and every null value with verified business details.
+// Name and old-town kafana identity supplied by the owner.
+// TODO: Fill remaining null contact fields with verified details.
 export const restaurant = {
-  name: "Bezisten",
-  nameIsPlaceholder: true,
+  name: "Trajche Bezisten",
+  nameIsPlaceholder: false,
   established: 1992,
   address: null as string | null,
   phone: null as string | null,
@@ -10,7 +11,7 @@ export const restaurant = {
   domain: null as string | null,
   socialImage: null as string | null,
   currency: { code: "MKD", symbol: "ден." },
-  sampleMenu: true,
+  sampleMenu: false,
 };
 export interface Review {
   author: string;

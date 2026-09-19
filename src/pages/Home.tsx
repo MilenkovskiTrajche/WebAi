@@ -25,21 +25,19 @@ export default function Home() {
             {t.find}
             <ArrowRight size={15} />
           </a>
-          <a className="hero-scroll" href="#story">
-            <span>↓</span>
-            {t.scroll}
-          </a>
         </div>
         <figure className="hero-image">
           <img
-            src="/images/restaurant/courtyard.svg"
-            width="900"
-            height="1100"
-            alt={t.illustration}
+            src="/images/restaurant/bezisten-dragor-1024.webp"
+            srcSet="/images/restaurant/bezisten-dragor-640.webp 640w, /images/restaurant/bezisten-dragor-1024.webp 1024w"
+            sizes="(max-width: 680px) 88vw, 44vw"
+            width="1024"
+            height="1536"
+            alt={t.heroImageAlt}
             fetchPriority="high"
           />
           <div className="photo-label">{t.place}</div>
-          <figcaption>{t.illustration}</figcaption>
+          <figcaption>{t.heroImageCaption}</figcaption>
           <div className="year-seal" aria-hidden="true">
             <span>EST.</span>
             <strong>1992</strong>
@@ -56,27 +54,6 @@ export default function Home() {
         <span className="diamond">✦</span>
         <span>SAAT KULA</span>
       </div>
-      <section id="story" className="story-section">
-        <div className="story-art">
-          <img
-            src="/images/bitola/clocktower.svg"
-            width="600"
-            height="650"
-            alt={t.illustration}
-            loading="lazy"
-          />
-          <span>01 / {t.story}</span>
-        </div>
-        <div className="story-copy">
-          <p className="eyebrow">{t.storyLabel}</p>
-          <h2>{t.storyTitle}</h2>
-          <p>{t.storyText}</p>
-          <a className="underlined-link" href="#location">
-            {t.storyLink}
-            <ArrowUpRight size={19} />
-          </a>
-        </div>
-      </section>
       <section className="menu-invitation">
         <p className="eyebrow">{t.menuLabel}</p>
         <h2>{t.menuTitle}</h2>

@@ -165,6 +165,7 @@ test("homepage visual inspection captures", async ({ page }) => {
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/");
+    await expect(page.locator('#story, a[href$="#story"]')).toHaveCount(0);
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({
       path: `tmp/home-${width}.png`,
@@ -199,4 +200,70 @@ test("all languages fit small phones and tablet at maximum text zoom", async ({
       await page.locator(".zoom-value").click();
     }
   }
+});
+
+test("turning sheet keeps both paper faces and the stationary page", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/menu");
+  await expect(page.locator(".sample-note")).toHaveCount(0);
+  await expect(page.locator(".header .logo")).toContainText("Trajche Bezisten");
+  await page.clock.install({ time: new Date("2026-09-19T00:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-09-19T00:00:01Z"));
+  await page.getByRole("button", { name: "Next pages", exact: true }).click();
+  // Freeze the CSS animation mid-turn to verify actual geometry and capture both sides.
+  await page.locator(".turning-sheet").evaluate((el) => {
+    for (const animation of el.getAnimations()) {
+      animation.pause();
+      animation.currentTime = 350;
+    }
+  });
+  await expect(page.locator(".sheet-front")).toContainText("Shopska salad");
+  await expect(page.locator(".sheet-back")).toContainText("Tavche gravche");
+  await expect(page.locator(".stationary-sheet")).toContainText(
+    "Village breakfast",
+  );
+  await expect(page.locator(".book-transition")).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
+  // Hold a visual copy independently of the JS cleanup timer so screenshot timing
+  // cannot accidentally capture the already-completed spread.
+  await page.evaluate(() => {
+    const original = document.querySelector(".book-transition")!;
+    const clone = original.cloneNode(true) as HTMLElement;
+    clone.classList.add("turn-inspection");
+    const sheet = clone.querySelector<HTMLElement>(".turning-sheet")!;
+    sheet.style.animation = "none";
+    sheet.style.transform = "rotateY(-65deg)";
+    original.parentElement!.append(clone);
+  });
+  await page.screenshot({ path: "tmp/turn-front-visual.png", fullPage: true });
+  await page.evaluate(() => {
+    document.querySelector<HTMLElement>(
+      ".turn-inspection .turning-sheet",
+    )!.style.transform = "rotateY(-130deg)";
+  });
+  await page.screenshot({ path: "tmp/turn-back-visual.png", fullPage: true });
+  await page.evaluate(() =>
+    document.querySelector(".turn-inspection")?.remove(),
+  );
+  await page.locator(".turning-sheet").evaluateAll((elements) => {
+    for (const el of elements)
+      for (const animation of el.getAnimations()) animation.finish();
+  });
+  await page.clock.resume();
+  await expect(page.locator(".book-transition")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Previous pages", exact: true })
+    .click();
+  await expect(page.locator(".sheet-back")).toContainText("Shopska salad");
+  await expect(page.locator(".book-transition")).toHaveCount(0);
+  await expect(page.locator(".menu-spread")).toContainText("Village breakfast");
+  await expect(page.locator(".menu-spread .allergen").first()).toHaveAttribute(
+    "aria-label",
+    "Eggs",
+  );
+  await expect(page.locator(".menu-spread .allergen").first()).toHaveText("");
 });

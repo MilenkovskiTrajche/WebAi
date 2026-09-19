@@ -2,7 +2,6 @@ export const strings = {
   en: {
     home: "Home",
     menu: "The menu",
-    story: "Our story",
     location: "Find us",
     privacy: "Privacy",
     language: "Language",
@@ -14,15 +13,9 @@ export const strings = {
     hero1: "Some places",
     hero2: "stay with you.",
     intro:
-      "By the Dragor River, in the heart of historic Bitola. A place to slow down, pull up a chair, and enjoy the moment.",
+      "Trajche Bezisten, an old-town kafana beside the Dragor River. The warmth of old Bitola, a place at the table, and time for good company.",
     explore: "Explore the menu",
     find: "Find your way here",
-    scroll: "A LITTLE OF OUR STORY",
-    storyLabel: "ROOTED IN BITOLA",
-    storyTitle: "Time moves a little slower here.",
-    storyText:
-      "Since 1992, this restaurant has been part of the historic Bezisten area. The Dragor River flows beside us, and the Clock Tower stands in view. Familiar surroundings. A place at the table.",
-    storyLink: "Come, take a seat",
     menuLabel: "MADE FOR THE MOMENT",
     menuTitle: "Good company. An open menu.",
     menuText:
@@ -41,8 +34,7 @@ export const strings = {
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
     allergens: "Allergen guide",
-    allergenNote:
-      "Please speak with our team about allergies before ordering. Sample allergen declarations require confirmation.",
+    allergenNote: "Please speak with our team about allergies before ordering.",
     continued: "continued",
     swipe: "Swipe or use the arrows to turn the page",
     empty: "The menu is being prepared.",
@@ -55,7 +47,9 @@ export const strings = {
     phone: "Call us",
     hours: "Opening hours",
     footer: "A place at the table, since 1992.",
-    illustration: "Architectural illustration · photography coming soon",
+    heroImageAlt:
+      "An imagined old-town scene with a stone bazaar, bridge and the Dragor River, in the style of an aged postcard",
+    heroImageCaption: "Old Bitola, imagined · AI-created illustration",
     privacyTitle: "A little clarity.",
     privacyBody:
       "This site has no accounts, analytics, advertising trackers or contact forms. Your language preference is stored only in your browser when you select it. You can remove it by clearing site data. Our hosting provider may process standard request logs, including IP addresses, to deliver and protect this site. PDF downloads are served by the same site. External map links, when available, open Google Maps under its own privacy policy.",
@@ -77,7 +71,6 @@ export const strings = {
   mk: {
     home: "Почетна",
     menu: "Менито",
-    story: "Нашата приказна",
     location: "Локација",
     privacy: "Приватност",
     language: "Јазик",
@@ -89,15 +82,9 @@ export const strings = {
     hero1: "Некои места",
     hero2: "остануваат со вас.",
     intro:
-      "Крај реката Драгор, во срцето на стара Битола. Место да забавите, да седнете и да уживате во моментот.",
+      "Trajche Bezisten, староградска кафана крај Драгор. Со духот на стара Битола, место на трпезата и време за добро друштво.",
     explore: "Разгледајте го менито",
     find: "Пронајдете нè",
-    scroll: "ДЕЛ ОД НАШАТА ПРИКАЗНА",
-    storyLabel: "СО КОРЕНИ ВО БИТОЛА",
-    storyTitle: "Тука времето тече поспоро.",
-    storyText:
-      "Од 1992 година, овој ресторан е дел од историскиот Безистен. Покрај нас тече Драгор, а пред нас е Саат Кулата. Познато опкружување. Место на трпезата.",
-    storyLink: "Повелете, седнете",
     menuLabel: "ЗА ВАШИОТ МОМЕНТ",
     menuTitle: "Добро друштво. Отворено мени.",
     menuText:
@@ -116,8 +103,7 @@ export const strings = {
     zoomIn: "Зголеми",
     zoomOut: "Намали",
     allergens: "Водич за алергени",
-    allergenNote:
-      "Пред нарачување, разговарајте со персоналот за алергии. Пример декларациите за алергени треба да се потврдат.",
+    allergenNote: "Пред нарачување, разговарајте со персоналот за алергии.",
     continued: "продолжение",
     swipe: "Лизгајте или користете ги стрелките за следна страница",
     empty: "Менито се подготвува.",
@@ -129,7 +115,9 @@ export const strings = {
     phone: "Јавете се",
     hours: "Работно време",
     footer: "Место на трпезата, од 1992.",
-    illustration: "Архитектонска илустрација · фотографии наскоро",
+    heroImageAlt:
+      "Замислен староградски призор со камен Безистен, мост и Драгор, во стил на стара разгледница",
+    heroImageCaption: "Замислена стара Битола · AI-илустрација",
     privacyTitle: "Малку јасност.",
     privacyBody:
       "Оваа страница нема сметки, аналитика, рекламни следачи или контакт формулари. Избраниот јазик се зачувува само во вашиот прелистувач. Може да го отстраните со бришење на податоците за страницата. Хостинг-провајдерот може да обработува стандардни записи за барања, вклучувајќи IP адреси, за испорака и заштита на страницата. PDF менито се презема од истата страница. Надворешните врски до Google Maps се предмет на неговата политика за приватност.",
@@ -151,7 +139,6 @@ export const strings = {
   de: {
     home: "Startseite",
     menu: "Die Speisekarte",
-    story: "Unsere Geschichte",
     location: "Anfahrt",
     privacy: "Datenschutz",
     language: "Sprache",
@@ -163,15 +150,9 @@ export const strings = {
     hero1: "Manche Orte",
     hero2: "bleiben bei Ihnen.",
     intro:
-      "Am Fluss Dragor, im Herzen des historischen Bitola. Ein Ort zum Innehalten, Platznehmen und Genießen.",
+      "Trajche Bezisten, eine traditionelle Altstadt-Kafana am Dragor. Der Charme des alten Bitola, ein Platz am Tisch und Zeit für gute Gesellschaft.",
     explore: "Speisekarte entdecken",
     find: "Den Weg zu uns finden",
-    scroll: "EIN STÜCK UNSERER GESCHICHTE",
-    storyLabel: "IN BITOLA VERWURZELT",
-    storyTitle: "Hier vergeht die Zeit etwas langsamer.",
-    storyText:
-      "Seit 1992 ist dieses Restaurant Teil des historischen Bezisten. Der Dragor fließt an uns vorbei, der Uhrturm liegt im Blick. Vertraute Umgebung. Ein Platz am Tisch.",
-    storyLink: "Nehmen Sie Platz",
     menuLabel: "FÜR DIESEN MOMENT",
     menuTitle: "Gute Gesellschaft. Eine offene Karte.",
     menuText:
@@ -191,7 +172,7 @@ export const strings = {
     zoomOut: "Verkleinern",
     allergens: "Allergenübersicht",
     allergenNote:
-      "Bitte sprechen Sie vor der Bestellung mit unserem Team über Allergien. Die beispielhaften Allergenangaben müssen bestätigt werden.",
+      "Bitte sprechen Sie vor der Bestellung mit unserem Team über Allergien.",
     continued: "Fortsetzung",
     swipe: "Wischen oder die Pfeile zum Umblättern verwenden",
     empty: "Die Speisekarte wird vorbereitet.",
@@ -203,7 +184,9 @@ export const strings = {
     phone: "Anrufen",
     hours: "Öffnungszeiten",
     footer: "Ein Platz am Tisch, seit 1992.",
-    illustration: "Architekturillustration · Fotos folgen",
+    heroImageAlt:
+      "Eine imaginierte Altstadtszene mit Steinbasar, Brücke und Dragor im Stil einer alten Postkarte",
+    heroImageCaption: "Das alte Bitola, imaginiert · KI-Illustration",
     privacyTitle: "Ein wenig Klarheit.",
     privacyBody:
       "Diese Website verwendet keine Konten, Analysewerkzeuge, Werbetracker oder Kontaktformulare. Ihre Sprachauswahl wird nur in Ihrem Browser gespeichert. Sie können sie durch Löschen der Websitedaten entfernen. Unser Hostinganbieter kann übliche Anfrageprotokolle einschließlich IP-Adressen zur Bereitstellung und zum Schutz der Website verarbeiten. PDF-Dateien werden von derselben Website bereitgestellt. Externe Kartenlinks öffnen Google Maps, dessen eigene Datenschutzrichtlinie gilt.",

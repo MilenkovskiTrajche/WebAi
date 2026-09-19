@@ -12,7 +12,7 @@ export const allergens: Record<string, Allergen> = {
   },
   crustaceans: {
     code: "02",
-    icon: "shell",
+    icon: "crustacean",
     name: { en: "Crustaceans", mk: "Ракови", de: "Krebstiere" },
   },
   eggs: {
@@ -27,7 +27,7 @@ export const allergens: Record<string, Allergen> = {
   },
   peanuts: {
     code: "05",
-    icon: "nut",
+    icon: "peanut",
     name: { en: "Peanuts", mk: "Кикиритки", de: "Erdnüsse" },
   },
   soy: {
@@ -57,7 +57,7 @@ export const allergens: Record<string, Allergen> = {
   },
   sesame: {
     code: "11",
-    icon: "seed",
+    icon: "sesame",
     name: { en: "Sesame", mk: "Сусам", de: "Sesam" },
   },
   sulphites: {

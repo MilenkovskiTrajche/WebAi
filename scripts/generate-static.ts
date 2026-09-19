@@ -23,7 +23,12 @@ for (const route of ["", "menu", "privacy", "404"]) {
     /<title>.*?<\/title>/,
     `<title>${title} · ${escape(restaurant.name)}</title>`,
   );
-  if (restaurant.sampleMenu || restaurant.nameIsPlaceholder || route === "404")
+  if (
+    !restaurant.domain ||
+    restaurant.sampleMenu ||
+    restaurant.nameIsPlaceholder ||
+    route === "404"
+  )
     output = output.replace(
       "</head>",
       '<meta name="robots" content="noindex, nofollow"/></head>',
