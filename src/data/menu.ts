@@ -1,4 +1,4 @@
-import { additionalNames } from "./menu-translations";
+import { additionalNames, additionalIngredients } from "./menu-translations";
 import type { MenuItem, Localized } from "../features/menu/types";
 const l = (en: string, mk: string, de: string): Localized => ({ en, mk, de });
 const dish = (
@@ -301,9 +301,9 @@ const canonicalMenu: MenuItem[] = [
   ),
 ];
 
-// New language names are reviewed independently of ingredient translations.
-// Missing el/sr/sq ingredient translations intentionally fall back to English.
+// Each dish retains one identity; independent translations are merged by stable item ID.
 export const menu: MenuItem[] = canonicalMenu.map((item) => ({
   ...item,
   name: { ...item.name, ...additionalNames[item.id] },
+  ingredients: { ...item.ingredients, ...additionalIngredients[item.id] },
 }));

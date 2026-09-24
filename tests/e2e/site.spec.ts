@@ -1,3 +1,6 @@
+import { menu } from "../../src/data/menu";
+import { secondaryLanguages } from "../../src/features/menu/types";
+import { ingredientLabels } from "../../src/i18n/strings";
 import { test, expect } from "@playwright/test";
 for (const width of [320, 375, 390, 393, 430, 768, 1024, 1440]) {
   test(`responsive routes and menu at ${width}px`, async ({ page }) => {
@@ -332,4 +335,39 @@ test("existing menu loading state draws the mark and respects reduced motion", a
   release();
   await expect(page.getByRole("status")).toHaveCount(0);
   await expect(page.locator(".menu-spread")).toBeVisible();
+});
+
+test("ingredient languages change together and remain readable on desktop, tablet and phone", async ({
+  page,
+}) => {
+  const item = menu.find((item) => item.id === "shopska")!;
+  for (const width of [320, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/menu");
+    for (const language of secondaryLanguages) {
+      await page.locator(".tools select").selectOption(language);
+      const dish = page.locator(".menu-spread .dish").first();
+      await expect(dish.locator(".ingredients-primary")).toHaveText(
+        `${ingredientLabels.mk}: ${item.ingredients.mk}`,
+      );
+      await expect(dish.locator(".ingredients-secondary")).toHaveText(
+        `${ingredientLabels[language]}: ${item.ingredients[language]}`,
+      );
+      await expect(dish.locator(".ingredients-secondary")).toHaveAttribute(
+        "lang",
+        language,
+      );
+      await expect(dish.locator(".ingredients-secondary")).toHaveCount(1);
+      await page.evaluate(() => document.fonts.ready);
+      expect(
+        await dish.evaluate((el) => el.scrollWidth <= el.clientWidth),
+      ).toBe(true);
+      if (width === 320 || width === 1440)
+        await page.screenshot({
+          path: `tmp/ingredients-${language}-${width}.png`,
+          fullPage: true,
+          animations: "disabled",
+        });
+    }
+  }
 });

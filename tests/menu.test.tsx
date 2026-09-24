@@ -16,7 +16,8 @@ import {
 } from "../src/features/menu/layout";
 import { MenuItem } from "../src/features/menu/MenuItem";
 import { formatPrice, printItems } from "../scripts/generate-menu-pdf";
-import { languages } from "../src/features/menu/types";
+import { ingredientLabels } from "../src/i18n/strings";
+import { languages, secondaryLanguages } from "../src/features/menu/types";
 describe("single source of truth", () => {
   it("sorts categories without mutating input", () => {
     expect(orderedCategories([...categories].reverse())).toEqual(categories);
@@ -136,8 +137,37 @@ describe("single source of truth", () => {
       for (const id of item.allergens) expect(allergens[id]).toBeDefined();
       for (const lang of languages) {
         expect(item.name[lang]).toBeTruthy();
-        expect(localize(item.ingredients, lang)).toBeTruthy();
+        expect(item.ingredients[lang]?.trim()).toBeTruthy();
       }
+    }
+  });
+});
+
+describe("bilingual ingredients", () => {
+  it("shows only canonical and selected ingredient languages for every dish", () => {
+    for (const item of menu)
+      for (const language of secondaryLanguages) {
+        const html = renderToStaticMarkup(
+          <MenuItem item={item} language={language} />,
+        );
+        expect(html).toContain(`ingredients-primary" lang="mk"`);
+        expect(html).toContain(`ingredients-secondary" lang="${language}"`);
+        expect(html).toContain(item.ingredients.mk!);
+        expect(html).toContain(item.ingredients[language]!);
+        expect(html).toContain(ingredientLabels[language]);
+        expect(html.match(/ingredients-secondary/g)).toHaveLength(1);
+      }
+  });
+  it("omits absent or blank translations instead of mislabelling a fallback", () => {
+    for (const missing of [undefined, "", "  "]) {
+      const item = {
+        ...menu[0],
+        ingredients: { ...menu[0].ingredients, sr: missing },
+      };
+      const html = renderToStaticMarkup(<MenuItem item={item} language="sr" />);
+      expect(html).toContain(item.ingredients.mk!);
+      expect(html).not.toContain("ingredients-secondary");
+      expect(html).not.toMatch(/undefined|null|TODO|MISSING_TRANSLATION/);
     }
   });
 });

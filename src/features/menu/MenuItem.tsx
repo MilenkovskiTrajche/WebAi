@@ -1,4 +1,5 @@
 import type { MenuItem as Item, Language } from "./types";
+import { ingredientLabels } from "../../i18n/strings";
 import { localize } from "./layout";
 import { allergens } from "../../data/allergens";
 import { Icon } from "../../components/Icons";
@@ -39,12 +40,17 @@ export function MenuItem({
       <p className="dish-translation" lang={language}>
         {localize(item.name, language)}
       </p>
-      <p
-        className="dish-description"
-        lang={item.ingredients[language] ? language : "en"}
-      >
-        {localize(item.ingredients, language)}
-      </p>
+      {item.ingredients.mk?.trim() && (
+        <p className="dish-description ingredients-primary" lang="mk">
+          <span>{ingredientLabels.mk}:</span> {item.ingredients.mk}
+        </p>
+      )}
+      {language !== "mk" && item.ingredients[language]?.trim() && (
+        <p className="dish-description ingredients-secondary" lang={language}>
+          <span>{ingredientLabels[language]}:</span>{" "}
+          {item.ingredients[language]}
+        </p>
+      )}
       <div className="dish-details">
         <span>{item.weight}</span>
         {item.allergens.map((id) => (

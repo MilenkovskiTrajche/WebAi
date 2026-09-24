@@ -220,3 +220,16 @@ export const strings = {
   sq: baseStrings.en,
 };
 export type Strings = typeof strings.en;
+
+// Shared by the bilingual web renderer and multilingual print generator.
+export const ingredientLabels: Record<
+  import("../features/menu/types").Language,
+  string
+> = {
+  mk: "Состојки",
+  en: "Ingredients",
+  de: "Zutaten",
+  el: "Συστατικά",
+  sr: "Састојци",
+  sq: "Përbërësit",
+};

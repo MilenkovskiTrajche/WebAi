@@ -1599,3 +1599,18 @@ footer {
     max-width: 90px;
   }
 }
+/* Canonical ingredients stay visible; only the second line changes language. */
+.dish .ingredients-primary {
+  color: #493e32;
+  margin-top: 10px;
+}
+.dish .ingredients-secondary {
+  margin-top: 4px;
+  color: #6b6054;
+}
+.dish-description {
+  overflow-wrap: anywhere;
+}
+.ingredients-primary > span {
+  font-weight: 500;
+}

@@ -1,5 +1,9 @@
 import { useLanguage } from "../i18n/LanguageContext";
-import type { Language } from "../features/menu/types";
+import {
+  secondaryLanguages,
+  type SecondaryLanguage,
+  type Language,
+} from "../features/menu/types";
 export function LanguageSelector() {
   const { language, setLanguage, t } = useLanguage();
   return (
@@ -25,29 +29,29 @@ export function MenuLanguageSelector() {
       <select
         aria-label="Secondary menu language / Втор јазик"
         value={secondary}
-        onChange={(e) =>
-          setSecondary(
-            e.target
-              .value as import("../features/menu/types").SecondaryLanguage,
-          )
-        }
+        onChange={(e) => setSecondary(e.target.value as SecondaryLanguage)}
       >
-        <option value="en" aria-label="English">
-          EN
-        </option>
-        <option value="de" aria-label="Deutsch">
-          DE
-        </option>
-        <option value="el" aria-label="Ελληνικά">
-          GR
-        </option>
-        <option value="sr" aria-label="Српски">
-          SR
-        </option>
-        <option value="sq" aria-label="Shqip">
-          AL
-        </option>
+        {secondaryLanguages.map((code) => (
+          <option key={code} value={code} aria-label={languageNames[code]}>
+            {languageCodes[code]}
+          </option>
+        ))}
       </select>
     </label>
   );
 }
+
+const languageNames: Record<SecondaryLanguage, string> = {
+  en: "English",
+  de: "Deutsch",
+  el: "Ελληνικά",
+  sr: "Српски",
+  sq: "Shqip",
+};
+const languageCodes: Record<SecondaryLanguage, string> = {
+  en: "EN",
+  de: "DE",
+  el: "GR",
+  sr: "SR",
+  sq: "AL",
+};

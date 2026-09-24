@@ -21,7 +21,7 @@ npm run build
 npm run preview
 ```
 
-The build generates all three PDFs, bundles the frontend and emits static route files plus SEO files. Preview serves `dist` at `http://127.0.0.1:4173`, including real HTTP 404 responses. Development uses Vite; unknown development paths use its SPA fallback, while the production static server serves `404.html`.
+The build generates the multilingual PDF and its compatibility copies, bundles the frontend and emits static route files plus SEO files. Preview serves `dist` at `http://127.0.0.1:4173`, including real HTTP 404 responses. Development uses Vite; unknown development paths use its SPA fallback, while the production static server serves `404.html`.
 
 ```sh
 npx playwright install chromium
@@ -45,7 +45,7 @@ E2E tests run against a production build, so run `npm run build` first. They lau
 
 ### Web and print separation
 
-Web items display dish name, ingredients, weight and accessible allergen icons. **No price is read by the web item renderer**, including hidden markup. Data and downloadable PDFs are intentionally public, so prices are not secrets. Print items include a fixed right-hand price box from the same numeric `price` field. Web and print share item identities, codes and category order; each format paginates for its own content. Print adds an unnumbered branded cover, all six name translations, a right-hand price column and a final allergen legend. The PDF generator still guards against overflow for unusually long future entries.
+Web items display dish name, ingredients, weight and accessible allergen icons. **No price is read by the web item renderer**, including hidden markup. Data and downloadable PDFs are intentionally public, so prices are not secrets. Print items include a fixed right-hand price box from the same numeric `price` field. Web and print share item identities, codes and category order; each format paginates for its own content. Print adds an unnumbered branded cover, all six name and ingredient translations, a right-hand price column and a final allergen legend. The PDF generator still guards against overflow for unusually long future entries.
 
 ### Menu interaction
 
@@ -114,4 +114,6 @@ Origin: `https://github.com/MilenkovskiTrajche/WebAi.git`. Never force-push. Kee
 
 The original stone-arch symbol and outlined heritage wordmark live in `public/branding/`. Open `/branding/` for all four variants, small-size previews and downloads. See `public/branding/README.md` for usage and font licenses. `src/components/Logo.tsx` supplies accessible reusable logos and the reduced-motion-aware lazy-menu loading mark; `src/config/brand.ts` shares asset paths and colors. Header, footer and menu introduction use the same identity; the removed story section stays removed.
 
-Run `npm run generate:branding` after editing `scripts/generate-branding.mjs`, then rebuild to update the vector PDF covers and inner-page marks. Production build regenerates both assets and PDFs. The multilingual edition currently has seven PDF pages: an unnumbered cover, five dish pages and an allergen legend. The favicon is a simplified architectural mark. No external fonts or raster images are embedded in the SVGs.
+Run `npm run generate:branding` after editing `scripts/generate-branding.mjs`, then rebuild to update the vector PDF covers and inner-page marks. Production build regenerates both assets and PDFs. The multilingual edition currently has nine PDF pages: an unnumbered cover, seven dish pages and an allergen legend. The favicon is a simplified architectural mark. No external fonts or raster images are embedded in the SVGs.
+
+Ingredient lists follow the same six-language model as names. The web shows Macedonian plus only the selected secondary translation, each with a localized label. A missing or blank secondary ingredient translation is omitted, never silently replaced with a differently labelled language. The printed two-column blocks pair each translated name with its ingredients; complete items stay together.

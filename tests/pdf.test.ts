@@ -4,7 +4,7 @@ import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { languages } from "../src/features/menu/types";
 import { restaurant } from "../src/config/restaurant";
 
-import { strings } from "../src/i18n/strings";
+import { strings, ingredientLabels } from "../src/i18n/strings";
 import { menu } from "../src/data/menu";
 import { formatPrice } from "../scripts/generate-menu-pdf";
 import { localize, pdfFilename } from "../src/features/menu/layout";
@@ -44,8 +44,13 @@ describe("generated printable PDFs", () => {
           if (pageText.includes(item.code)) {
             expect(pageText).toContain(item.name.mk);
             expect(pageText).toContain(formatPrice(item.price));
-            for (const lang of languages)
+            for (const lang of languages) {
               expect(pageText).toContain(localize(item.name, lang));
+              expect(pageText.replace(/\s+/g, " ")).toContain(
+                item.ingredients[lang]!.replace(/\s+/g, " "),
+              );
+              expect(pageText).toContain(ingredientLabels[lang]);
+            }
           }
         expect(pageText).toContain(restaurant.name);
         if (index === 1) {

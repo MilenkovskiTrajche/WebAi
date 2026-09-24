@@ -16,12 +16,13 @@ import {
 } from "../src/features/menu/layout";
 import {
   languages,
+  secondaryLanguages,
   type Category,
   type Language,
   type MenuItem,
 } from "../src/features/menu/types";
 import { drawMenuIcon } from "./draw-menu-icon";
-import { strings } from "../src/i18n/strings";
+import { strings, ingredientLabels } from "../src/i18n/strings";
 export const formatPrice = (price: number) =>
   `${new Intl.NumberFormat("en-GB", { maximumFractionDigits: 2 }).format(price)} ${restaurant.currency.symbol}`;
 export const printItems = (items: MenuItem[]) =>
@@ -75,7 +76,6 @@ export async function generatePDF(language: Language = "mk") {
       .stroke();
     y = 102;
   };
-  const secondaryLanguages = ["en", "de", "el", "sr", "sq"] as const;
   const heading = (category: Category, continued = false) => {
     doc
       .font("sans")
@@ -106,7 +106,7 @@ export async function generatePDF(language: Language = "mk") {
     y = doc.y + 17;
   };
   // The SVG cover remains vector all the way to print; outlined lettering has no font dependency.
-  // It is unnumbered, so inner menu pages retain their existing web page numbers.
+  // It is unnumbered; multilingual paper pages paginate independently of the web.
   doc.addPage();
   doc.rect(45, 45, 505, 707).lineWidth(0.7).strokeColor("#cfc8b8").stroke();
   SVGtoPDF(doc, logoSvg, 100, 190, {
@@ -144,12 +144,10 @@ export async function generatePDF(language: Language = "mk") {
       width: 465,
       align: "center",
     });
-  doc
-    .fontSize(8)
-    .text("MK · EN · DE · EL · SR · SQ", 65, 557, {
-      width: 465,
-      align: "center",
-    });
+  doc.fontSize(8).text("MK · EN · DE · EL · SR · SQ", 65, 557, {
+    width: 465,
+    align: "center",
+  });
   doc
     .font("sans")
     .fontSize(8)
@@ -170,30 +168,41 @@ export async function generatePDF(language: Language = "mk") {
       const nameHeight = doc.heightOfString(`${item.code} · ${item.name.mk}`, {
         width: 395,
       });
-      doc.font("sans").fontSize(8);
-      const translations = secondaryLanguages.map(
-        (lang) => `${lang.toUpperCase()} · ${localize(item.name, lang)}`,
-      );
-      const rows = [0, 2, 4].map((i) =>
-        Math.max(
-          ...translations
-            .slice(i, i + 2)
-            .map((text) =>
-              doc.heightOfString(text, { width: 240, lineGap: 1 }),
-            ),
-        ),
-      );
-      doc.fontSize(7.5);
-      const description = item.ingredients.mk || item.ingredients.en;
-      const descriptionHeight = doc.heightOfString(description, {
-        width: 505,
-        lineGap: 1,
+      // Pair each translated name with its own ingredient list; this avoids six
+      // disconnected name lines followed by six more ingredient lines.
+      const translations = languages.map((lang) => {
+        const name =
+          lang === "mk"
+            ? `MK · ${ingredientLabels.mk}`
+            : `${lang.toUpperCase()} · ${localize(item.name, lang)}`;
+        const value = item.ingredients[lang]?.trim();
+        const ingredients = value
+          ? lang === "mk"
+            ? value
+            : `${ingredientLabels[lang]}: ${value}`
+          : "";
+        doc.font("sans").fontSize(8);
+        const nameHeight = doc.heightOfString(name, { width: 240, lineGap: 1 });
+        doc.fontSize(7.5);
+        const ingredientHeight = ingredients
+          ? doc.heightOfString(ingredients, { width: 240, lineGap: 1 })
+          : 0;
+        return {
+          name,
+          ingredients,
+          nameHeight,
+          height: nameHeight + (ingredientHeight ? 3 + ingredientHeight : 0),
+        };
       });
-      const height =
-        nameHeight +
-        rows.reduce((a, b) => a + b + 4, 0) +
-        descriptionHeight +
-        41;
+      const rows: number[] = [];
+      for (let i = 0; i < translations.length; i += 2)
+        rows.push(
+          Math.max(
+            ...translations.slice(i, i + 2).map((block) => block.height),
+          ),
+        );
+      const titleHeight = Math.max(nameHeight, 27);
+      const height = titleHeight + rows.reduce((a, b) => a + b + 6, 0) + 27;
       if (height > 520)
         throw new Error(`Dish ${item.id} is too long for a print page.`);
       if (y + height + (needsHeading ? 90 : 0) > 738) {
@@ -223,20 +232,30 @@ export async function generatePDF(language: Language = "mk") {
           width: 86,
           align: "center",
         });
-      y += nameHeight + 9;
-      doc.font("sans").fontSize(8).fillColor(muted);
-      for (let row = 0; row < 3; row++) {
+      // Full-width ingredient content starts below the price box, never beside it.
+      y += titleHeight + 5;
+      for (let row = 0; row < rows.length; row++) {
         for (let col = 0; col < 2; col++) {
-          const text = translations[row * 2 + col];
-          if (text)
-            doc.text(text, 45 + col * 260, y, { width: 240, lineGap: 1 });
+          const block = translations[row * 2 + col];
+          if (!block) continue;
+          const x = 45 + col * 260;
+          doc
+            .font("sans")
+            .fontSize(8)
+            .fillColor(ink)
+            .text(block.name, x, y, { width: 240, lineGap: 1 });
+          if (block.ingredients)
+            doc
+              .fontSize(7.5)
+              .fillColor(row === 0 && col === 0 ? ink : muted)
+              .text(block.ingredients, x, y + block.nameHeight + 3, {
+                width: 240,
+                lineGap: 1,
+              });
         }
-        y += rows[row] + 4;
+        y += rows[row] + 6;
       }
-      doc
-        .fontSize(7.5)
-        .text(description, 45, y + 2, { width: 505, lineGap: 1 });
-      y += descriptionHeight + 13;
+      doc.font("sans").fillColor(muted);
       doc.fontSize(7).text(item.weight, 45, y);
       item.allergens.forEach((id, index) =>
         drawMenuIcon(doc, allergens[id].icon, 105 + index * 23, y - 3, 13),

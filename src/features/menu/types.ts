@@ -1,14 +1,10 @@
 export const languages = ["mk", "en", "de", "el", "sr", "sq"] as const;
 export type Language = (typeof languages)[number];
-export type Localized = {
-  en: string;
-  mk?: string;
-  de?: string;
-  el?: string;
-  sr?: string;
-  sq?: string;
-};
+export type Localized = { en: string } & Partial<Record<Language, string>>;
 export type SecondaryLanguage = Exclude<Language, "mk">;
+export const secondaryLanguages = languages.filter(
+  (language): language is SecondaryLanguage => language !== "mk",
+);
 export interface Category {
   id: string;
   name: Localized;

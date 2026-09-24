@@ -38,7 +38,10 @@ export function paginate(
       const longest = Math.max(
         ...Object.values(item.ingredients).map((s) => s.length),
       );
-      const cost = 3 + Math.ceil(longest / 65);
+      const cost =
+        3 +
+        Math.ceil(longest / 65) +
+        Math.ceil((item.ingredients.mk?.length || 0) / 65);
       const newSection = page.sections.at(-1)?.categoryId !== category.id;
       if (used && used + cost + (newSection ? 2 : 0) > capacity) {
         pages.push(page);
