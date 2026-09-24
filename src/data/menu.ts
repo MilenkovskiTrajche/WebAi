@@ -1,8 +1,10 @@
+import { additionalNames } from "./menu-translations";
 import type { MenuItem, Localized } from "../features/menu/types";
 const l = (en: string, mk: string, de: string): Localized => ({ en, mk, de });
 const dish = (
   id: string,
   categoryId: string,
+  code: string,
   name: Localized,
   ingredients: Localized,
   weight: string,
@@ -12,6 +14,7 @@ const dish = (
 ): MenuItem => ({
   id,
   categoryId,
+  code,
   name,
   ingredients,
   weight,
@@ -21,10 +24,11 @@ const dish = (
   enabled: true,
 });
 // TODO: All dishes, ingredients, weights, allergen declarations and prices below are DEMONSTRATION content. Verify before publishing.
-export const menu: MenuItem[] = [
+const canonicalMenu: MenuItem[] = [
   dish(
     "village-breakfast",
-    "breakfast",
+    "hot-appetizers",
+    "TP01",
     l("Village breakfast", "Селски појадок", "Frühstück nach Bauernart"),
     l(
       "Eggs, white cheese, tomato, olives and warm bread.",
@@ -38,7 +42,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "omelette",
-    "breakfast",
+    "hot-appetizers",
+    "TP02",
     l("Garden omelette", "Омлет со зеленчук", "Gartenomelett"),
     l(
       "Three eggs with seasonal vegetables and white cheese.",
@@ -52,7 +57,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "french-toast",
-    "breakfast",
+    "hot-appetizers",
+    "TP03",
     l("Golden French toast", "Пржени лепчиња", "Goldener French Toast"),
     l(
       "Egg-dipped bread, white cheese and sour cream.",
@@ -66,7 +72,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "ajvar",
-    "breakfast",
+    "cold-appetizers",
+    "LP01",
     l("Bread & ajvar", "Леб и ајвар", "Brot & Ajvar"),
     l(
       "Roasted pepper spread, warm bread and olives.",
@@ -81,6 +88,7 @@ export const menu: MenuItem[] = [
   dish(
     "shopska",
     "salads",
+    "SA01",
     l("Shopska salad", "Шопска салата", "Schopska-Salat"),
     l(
       "Tomato, cucumber, green pepper, onion and grated white cheese.",
@@ -95,6 +103,7 @@ export const menu: MenuItem[] = [
   dish(
     "roasted-peppers",
     "salads",
+    "SA02",
     l("Roasted peppers", "Печени пиперки", "Geröstete Paprika"),
     l(
       "Roasted peppers with garlic, parsley and olive oil.",
@@ -109,6 +118,7 @@ export const menu: MenuItem[] = [
   dish(
     "seasonal-salad",
     "salads",
+    "SA03",
     l("Seasonal greens", "Сезонска зелена салата", "Saisonaler Blattsalat"),
     l(
       "Fresh leaves, cucumber, radish and lemon dressing.",
@@ -122,7 +132,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "tavche",
-    "mains",
+    "hot-appetizers",
+    "TP04",
     l("Tavche gravche", "Тавче гравче", "Tavče Gravče"),
     l(
       "Baked beans with onion, sweet paprika and dried pepper.",
@@ -132,11 +143,12 @@ export const menu: MenuItem[] = [
     "400 g",
     [],
     280,
-    10,
+    40,
   ),
   dish(
     "chicken",
-    "mains",
+    "grill",
+    "SK01",
     l("Grilled chicken", "Пилешко на скара", "Hähnchen vom Grill"),
     l(
       "Chicken fillet, roasted potatoes and seasonal vegetables.",
@@ -150,7 +162,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "trout",
-    "mains",
+    "fish",
+    "RI01",
     l("Grilled trout", "Пастрмка на скара", "Gegrillte Forelle"),
     l(
       "Whole trout with lemon, parsley and potatoes.",
@@ -164,7 +177,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "vegetable-platter",
-    "mains",
+    "sides",
+    "DO01",
     l("Garden platter", "Зеленчукова чинија", "Gemüseteller"),
     l(
       "Grilled courgette, aubergine, peppers and mushroom rice.",
@@ -178,7 +192,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "pasta",
-    "mains",
+    "hot-appetizers",
+    "TP05",
     l(
       "Tomato & basil pasta",
       "Паста со домат и босилек",
@@ -197,6 +212,7 @@ export const menu: MenuItem[] = [
   dish(
     "baklava",
     "desserts",
+    "DE01",
     l("Walnut baklava", "Баклава со ореви", "Walnuss-Baklava"),
     l(
       "Layers of fine pastry, walnuts and lemon syrup.",
@@ -211,6 +227,7 @@ export const menu: MenuItem[] = [
   dish(
     "pancakes",
     "desserts",
+    "DE02",
     l("Chocolate pancakes", "Палачинки со чоколадо", "Schokoladenpfannkuchen"),
     l(
       "Warm pancakes with chocolate and crushed hazelnuts.",
@@ -224,7 +241,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "espresso",
-    "drinks",
+    "hot-drinks",
+    "TN01",
     l("Espresso", "Еспресо", "Espresso"),
     l(
       "A short, aromatic coffee.",
@@ -238,7 +256,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "tea",
-    "drinks",
+    "hot-drinks",
+    "TN02",
     l("Mountain tea", "Планински чај", "Bergtee"),
     l(
       "Herbal infusion, served with lemon.",
@@ -252,7 +271,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "lemonade",
-    "drinks",
+    "non-alcoholic",
+    "BP01",
     l("Fresh lemonade", "Свежа лимонада", "Frische Limonade"),
     l(
       "Fresh lemon juice and still water.",
@@ -266,7 +286,8 @@ export const menu: MenuItem[] = [
   ),
   dish(
     "wine",
-    "drinks",
+    "wine",
+    "VI01",
     l("Glass of red wine", "Чаша црвено вино", "Ein Glas Rotwein"),
     l(
       "Ask our team about the available selection.",
@@ -279,3 +300,10 @@ export const menu: MenuItem[] = [
     40,
   ),
 ];
+
+// New language names are reviewed independently of ingredient translations.
+// Missing el/sr/sq ingredient translations intentionally fall back to English.
+export const menu: MenuItem[] = canonicalMenu.map((item) => ({
+  ...item,
+  name: { ...item.name, ...additionalNames[item.id] },
+}));

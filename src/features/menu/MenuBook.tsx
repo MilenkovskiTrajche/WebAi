@@ -17,7 +17,7 @@ import { useLanguage } from "../../i18n/LanguageContext";
 const pages = paginate(menu, categories);
 const categoryMap = categoryPageMap(pages);
 export default function MenuBook() {
-  const { t, language } = useLanguage();
+  const { t, secondary: language } = useLanguage();
   const [desktop, setDesktop] = useState(
     () => window.matchMedia("(min-width: 900px)").matches,
   );
@@ -123,8 +123,10 @@ export default function MenuBook() {
                 setPage(target);
               }}
             >
-              <Icon name={c.icon} />
-              <span>{localize(c.name, language)}</span>
+              <span lang="mk">
+                {c.name.mk}
+                <small lang={language}>{localize(c.name, language)}</small>
+              </span>
             </button>
           ))}
       </nav>

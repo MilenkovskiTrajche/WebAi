@@ -4,7 +4,7 @@ import { localize } from "./layout";
 import { MenuItem } from "./MenuItem";
 import { restaurant } from "../../config/restaurant";
 import { strings } from "../../i18n/strings";
-import { Icon } from "../../components/Icons";
+
 export function MenuPage({
   page,
   index,
@@ -27,13 +27,20 @@ export function MenuPage({
         {page.sections.map((section) => {
           const category = categories.find((c) => c.id === section.categoryId)!;
           return (
-            <section key={section.categoryId} className="menu-category">
-              <div className="category-flourish">
-                <span />
-                <Icon name={category.icon} size={24} />
-                <span />
+            <section
+              key={section.categoryId}
+              className={`menu-category category-${category.id}`}
+            >
+              <p className="menu-section-label" lang="mk">
+                {category.order >= 90 ? "ПИЈАЛОЦИ" : "КУЈНА"}
+              </p>
+              <h2 lang="mk">{category.name.mk}</h2>
+              <p className="category-translation" lang={language}>
+                {localize(category.name, language)}
+              </p>
+              <div className="category-flourish" aria-hidden="true">
+                <span />◆<span />
               </div>
-              <h2>{localize(category.name, language)}</h2>
               {section.continued && (
                 <p className="continued">{strings[language].continued}</p>
               )}

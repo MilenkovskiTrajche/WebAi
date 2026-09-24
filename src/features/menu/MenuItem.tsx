@@ -32,8 +32,19 @@ export function MenuItem({
 }) {
   return (
     <article className="dish">
-      <h3>{localize(item.name, language)}</h3>
-      <p>{localize(item.ingredients, language)}</p>
+      <h3 lang="mk">
+        <span className="dish-code">{item.code}</span>
+        {item.name.mk || item.name.en}
+      </h3>
+      <p className="dish-translation" lang={language}>
+        {localize(item.name, language)}
+      </p>
+      <p
+        className="dish-description"
+        lang={item.ingredients[language] ? language : "en"}
+      >
+        {localize(item.ingredients, language)}
+      </p>
       <div className="dish-details">
         <span>{item.weight}</span>
         {item.allergens.map((id) => (

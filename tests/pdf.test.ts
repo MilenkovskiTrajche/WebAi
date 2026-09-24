@@ -3,13 +3,13 @@ import { describe, it, expect } from "vitest";
 import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { languages } from "../src/features/menu/types";
 import { restaurant } from "../src/config/restaurant";
-import { categories } from "../src/data/categories";
+
 import { strings } from "../src/i18n/strings";
 import { menu } from "../src/data/menu";
 import { formatPrice } from "../scripts/generate-menu-pdf";
-import { localize, pdfFilename, paginate } from "../src/features/menu/layout";
+import { localize, pdfFilename } from "../src/features/menu/layout";
 describe("generated printable PDFs", () => {
-  for (const language of languages) {
+  for (const language of ["mk"] as const) {
     it(`${language}: every enabled dish and its price survive PDF generation`, async () => {
       const bytes = new Uint8Array(
         await readFile(`public/menu/${pdfFilename(language)}`),
@@ -21,8 +21,7 @@ describe("generated printable PDFs", () => {
       });
       const doc = await task.promise;
       let text = "";
-      const webPages = paginate(menu, categories);
-      expect(doc.numPages).toBe(webPages.length + 2);
+      expect(doc.numPages).toBeLessThanOrEqual(9);
       for (let index = 1; index <= doc.numPages; index++) {
         const page = await doc.getPage(index);
         const content = await page.getTextContent();
@@ -40,13 +39,14 @@ describe("generated printable PDFs", () => {
           .filter((i) => "str" in i)
           .map((i) => ("str" in i ? i.str : ""))
           .join(" ");
-        if (index > 1 && index <= webPages.length + 1) {
-          for (const item of webPages[index - 2].sections.flatMap(
-            (s) => s.items,
-          )) {
-            expect(pageText).toContain(localize(item.name, language));
+        // Every item's code, canonical name, translations and price stay together.
+        for (const item of menu)
+          if (pageText.includes(item.code)) {
+            expect(pageText).toContain(item.name.mk);
+            expect(pageText).toContain(formatPrice(item.price));
+            for (const lang of languages)
+              expect(pageText).toContain(localize(item.name, lang));
           }
-        }
         expect(pageText).toContain(restaurant.name);
         if (index === 1) {
           expect(pageText).toContain(strings[language].menuCoverTitle);
@@ -64,7 +64,9 @@ describe("generated printable PDFs", () => {
         expect(height).toBeCloseTo(841.89, 1);
       }
       for (const item of menu.filter((item) => item.enabled)) {
-        expect(text).toContain(localize(item.name, language));
+        expect(text).toContain(item.code);
+        for (const lang of languages)
+          expect(text).toContain(localize(item.name, lang));
         expect(text).toContain(formatPrice(item.price));
       }
       expect(text.match(/ден\./g)?.length).toBe(

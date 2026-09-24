@@ -9,9 +9,11 @@ export const localize = (value: Localized, lang: Language) =>
   value[lang] || value.en;
 export function detectLanguage(value: string | null): Language {
   const code = value?.split("-")[0].toLowerCase();
-  return code === "mk" || code === "de" ? code : "en";
+  return ["mk", "de", "el", "sr", "sq"].includes(code || "")
+    ? (code as Language)
+    : "en";
 }
-export const pdfFilename = (lang: Language) => `menu-${lang}.pdf`;
+export const pdfFilename = (_lang?: Language) => "menu-multilingual.pdf";
 export const spreadForPage = (page: number) => Math.floor(page / 2) * 2;
 export const orderedCategories = (categories: Category[]) =>
   [...categories].sort((a, b) => a.order - b.order);
@@ -24,7 +26,7 @@ export const activeItems = (items: MenuItem[], categoryId: string) =>
 export function paginate(
   items: MenuItem[],
   categories: Category[],
-  capacity = 16,
+  capacity = 18,
 ): MenuPageData[] {
   const pages: MenuPageData[] = [];
   let page: MenuPageData = { sections: [] };
@@ -36,7 +38,7 @@ export function paginate(
       const longest = Math.max(
         ...Object.values(item.ingredients).map((s) => s.length),
       );
-      const cost = 2 + Math.ceil(longest / 65);
+      const cost = 3 + Math.ceil(longest / 65);
       const newSection = page.sections.at(-1)?.categoryId !== category.id;
       if (used && used + cost + (newSection ? 2 : 0) > capacity) {
         pages.push(page);

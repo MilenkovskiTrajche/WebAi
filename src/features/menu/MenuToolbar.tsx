@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext";
-import { LanguageSelector } from "../../components/LanguageSelector";
+import { MenuLanguageSelector } from "../../components/LanguageSelector";
 import { MenuOverflowMenu } from "./MenuOverflowMenu";
 interface Props {
   page: number;
@@ -65,7 +65,7 @@ export function MenuToolbar({ page, count, step, turn, zoom, setZoom }: Props) {
             <Plus size={17} />
           </button>
         </div>
-        <LanguageSelector />
+        <MenuLanguageSelector />
         <MenuOverflowMenu reset={() => setZoom(100)} />
       </div>
     </div>

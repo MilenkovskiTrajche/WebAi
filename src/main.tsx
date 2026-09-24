@@ -9,6 +9,8 @@ import "@fontsource/cormorant-garamond/cyrillic-400-italic.css";
 import "@fontsource/dm-sans/latin-400.css";
 import "@fontsource/dm-sans/latin-500.css";
 import "@fontsource/noto-sans/cyrillic-400.css";
+import "@fontsource/noto-sans/greek-400.css";
+import "@fontsource/dm-sans/latin-ext-400.css";
 import "./styles/main.css";
 import App from "./App";
 import { LanguageProvider } from "./i18n/LanguageContext";

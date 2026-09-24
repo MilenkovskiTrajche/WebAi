@@ -45,13 +45,13 @@ E2E tests run against a production build, so run `npm run build` first. They lau
 
 ### Web and print separation
 
-Web items display dish name, ingredients, weight and accessible allergen icons. **No price is read by the web item renderer**, including hidden markup. Data and downloadable PDFs are intentionally public, so prices are not secrets. Print items include a fixed right-hand price box from the same numeric `price` field. Web and print share the generated category/page grouping. Print adds an unnumbered branded cover, a right-hand price column and a final allergen legend. The PDF generator still guards against overflow for unusually long future entries.
+Web items display dish name, ingredients, weight and accessible allergen icons. **No price is read by the web item renderer**, including hidden markup. Data and downloadable PDFs are intentionally public, so prices are not secrets. Print items include a fixed right-hand price box from the same numeric `price` field. Web and print share item identities, codes and category order; each format paginates for its own content. Print adds an unnumbered branded cover, all six name translations, a right-hand price column and a final allergen legend. The PDF generator still guards against overflow for unusually long future entries.
 
 ### Menu interaction
 
 Below 900px the viewer shows one page; at 900px and above it shows two. CSS perspective rotates a two-sided paper leaf around the center gutter, showing the outgoing page on the front and the destination page on its reverse. The other old page stays stationary until the turn completes. Animated light/shadow gives the sheet depth. Buttons, horizontal touch swipes and Left/Right arrows navigate. The viewer is keyboard focusable; native text/select controls retain their arrow behavior. Reduced motion disables animation. Zoom (85–145%) reflows text inside pages instead of creating horizontal panning; native browser pinch zoom remains available, and swipe page navigation is disabled during multi-touch or custom text zoom. Toolbar reset restores 100%. Categories map to the first actual page containing their dishes. A category may continue across pages or share a page.
 
-The overflow has a language-specific download and reset. It supports focus, arrow keys, Home/End, Escape, outside click and ordinary Tab navigation. Optional fullscreen is deliberately omitted.
+The overflow has the multilingual PDF download and reset. It supports focus, arrow keys, Home/End, Escape, outside click and ordinary Tab navigation. Optional fullscreen is deliberately omitted.
 
 ## Content and images
 
@@ -66,7 +66,7 @@ Update `Home.tsx` image paths and localized alt text; supply `srcSet`/`sizes` fo
 
 ## Languages
 
-Macedonian (`mk`), English (`en`), German (`de`). Browser language is detected on first visit; unsupported languages fall back to English. Explicit choice is stored in `restaurant-language` localStorage. Storage failure is harmless. Missing dish translations fall back to English. Downloads follow the selected language. Full UI translation and document language/metadata update together.
+Site interface: Macedonian (`mk`), English (`en`), German (`de`). The menu always shows Macedonian plus one secondary language: English, German, Greek (`el`), Serbian (`sr`) or Albanian (`sq`). The compact MK + selector changes only this secondary language and stores `menu-secondary-language` independently. Browser language is detected on first visit; unsupported languages fall back to English. Explicit choice is stored in `restaurant-language` localStorage. Storage failure is harmless. Missing dish translations fall back to English. Every download serves the same six-language PDF. Full UI translation and document language/metadata update together.
 
 ## Printable menus
 
@@ -74,7 +74,7 @@ Macedonian (`mk`), English (`en`), German (`de`). Browser language is detected o
 npm run generate:menu
 ```
 
-Produces `public/menu/menu-mk.pdf`, `menu-en.pdf`, `menu-de.pdf`. These are committed build outputs. Regenerate after every content or currency edit; `npm run build` does so automatically. A4 portrait, 45pt (15.9mm) margins, embedded fonts, vector text/lines, aligned price boxes and page numbers. No screenshot rasterization and no browser print dialog. Print at 100% actual size. `sampleMenu` is now false at the owner’s request; PDFs carry the regular restaurant footer. Ask a print shop to check a physical proof before a large run.
+Produces `public/menu/menu-multilingual.pdf` and identical compatibility copies at the six `menu-{language}.pdf` paths. These are committed build outputs. Regenerate after every content or currency edit; `npm run build` does so automatically. A4 portrait, 45pt (15.9mm) margins, embedded fonts, vector text/lines, aligned price boxes and page numbers. No screenshot rasterization and no browser print dialog. Print at 100% actual size. `sampleMenu` is now false at the owner’s request; PDFs carry the regular restaurant footer. Ask a print shop to check a physical proof before a large run.
 
 ## Deployment: Cloudflare Pages
 
@@ -114,4 +114,4 @@ Origin: `https://github.com/MilenkovskiTrajche/WebAi.git`. Never force-push. Kee
 
 The original stone-arch symbol and outlined heritage wordmark live in `public/branding/`. Open `/branding/` for all four variants, small-size previews and downloads. See `public/branding/README.md` for usage and font licenses. `src/components/Logo.tsx` supplies accessible reusable logos and the reduced-motion-aware lazy-menu loading mark; `src/config/brand.ts` shares asset paths and colors. Header, footer and menu introduction use the same identity; the removed story section stays removed.
 
-Run `npm run generate:branding` after editing `scripts/generate-branding.mjs`, then rebuild to update the vector PDF covers and inner-page marks. Production build regenerates both assets and PDFs. Each language currently has seven PDF pages: an unnumbered cover, five dish pages and an allergen legend. The favicon is a simplified architectural mark. No external fonts or raster images are embedded in the SVGs.
+Run `npm run generate:branding` after editing `scripts/generate-branding.mjs`, then rebuild to update the vector PDF covers and inner-page marks. Production build regenerates both assets and PDFs. The multilingual edition currently has seven PDF pages: an unnumbered cover, five dish pages and an allergen legend. The favicon is a simplified architectural mark. No external fonts or raster images are embedded in the SVGs.

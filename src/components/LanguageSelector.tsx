@@ -16,3 +16,38 @@ export function LanguageSelector() {
     </label>
   );
 }
+
+export function MenuLanguageSelector() {
+  const { secondary, setSecondary } = useLanguage();
+  return (
+    <label className="language-select menu-language-select">
+      <span lang="mk">МК +</span>
+      <select
+        aria-label="Secondary menu language / Втор јазик"
+        value={secondary}
+        onChange={(e) =>
+          setSecondary(
+            e.target
+              .value as import("../features/menu/types").SecondaryLanguage,
+          )
+        }
+      >
+        <option value="en" aria-label="English">
+          EN
+        </option>
+        <option value="de" aria-label="Deutsch">
+          DE
+        </option>
+        <option value="el" aria-label="Ελληνικά">
+          GR
+        </option>
+        <option value="sr" aria-label="Српски">
+          SR
+        </option>
+        <option value="sq" aria-label="Shqip">
+          AL
+        </option>
+      </select>
+    </label>
+  );
+}

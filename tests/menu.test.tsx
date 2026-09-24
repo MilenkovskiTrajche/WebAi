@@ -37,7 +37,9 @@ describe("single source of truth", () => {
     );
     expect(new Set(ids).size).toBe(menu.length);
     const map = categoryPageMap(pages);
-    for (const c of categories) {
+    for (const c of categories.filter((c) =>
+      menu.some((item) => item.categoryId === c.id),
+    )) {
       expect(pages[map[c.id]].sections.some((s) => s.categoryId === c.id)).toBe(
         true,
       );
@@ -66,12 +68,37 @@ describe("single source of truth", () => {
     ).toEqual(["mk", "de", "en", "en", "en"]);
     expect(localize({ en: "Fallback" }, "mk")).toBe("Fallback");
   });
-  it("selects language-specific filenames", () => {
-    expect(languages.map(pdfFilename)).toEqual([
-      "menu-mk.pdf",
-      "menu-en.pdf",
-      "menu-de.pdf",
+  it("uses one multilingual downloadable edition", () => {
+    expect(new Set(languages.map(pdfFilename))).toEqual(
+      new Set(["menu-multilingual.pdf"]),
+    );
+  });
+  it("preserves canonical category order and unique immutable waiter codes", () => {
+    expect(categories.map((c) => c.id)).toEqual([
+      "salads",
+      "cold-appetizers",
+      "hot-appetizers",
+      "grill",
+      "grill-specialties",
+      "fish",
+      "sides",
+      "desserts",
+      "non-alcoholic",
+      "spirits",
+      "wine",
+      "hot-drinks",
     ]);
+    expect(new Set(menu.map((item) => item.code)).size).toBe(menu.length);
+    for (const item of menu) {
+      expect(item.code).toMatch(/^[A-Z]{2}\d{2}$/);
+      for (const language of languages.filter((l) => l !== "mk")) {
+        const html = renderToStaticMarkup(
+          <MenuItem item={item} language={language} />,
+        );
+        expect(html).toContain(item.name.mk!);
+        expect(html).toContain(item.code);
+      }
+    }
   });
   it("never renders price in visible or hidden web markup", () => {
     for (const language of languages) {
@@ -109,7 +136,7 @@ describe("single source of truth", () => {
       for (const id of item.allergens) expect(allergens[id]).toBeDefined();
       for (const lang of languages) {
         expect(item.name[lang]).toBeTruthy();
-        expect(item.ingredients[lang]).toBeTruthy();
+        expect(localize(item.ingredients, lang)).toBeTruthy();
       }
     }
   });

@@ -19,6 +19,9 @@ The owner confirmed **Trajche Bezisten**, an old-town kafana, and requested the 
 - [ ] Approved Macedonian translations
 - [ ] Approved English translations
 - [ ] Approved German translations
+- [ ] Review Greek, Serbian and Albanian dish/category/allergen translations
+- [ ] Supply Greek, Serbian and Albanian ingredient descriptions (English fallback online until supplied)
+- [ ] Confirm warm-starter and side placements for existing breakfast, pasta, tavche and vegetable platter items
 - [ ] Authentic Google reviews, source links and approval to quote (optional; hidden when empty)
 - [ ] Production domain
 - [ ] Social sharing image and permission to use it

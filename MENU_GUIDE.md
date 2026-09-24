@@ -4,10 +4,10 @@ You only edit the source data. The web menu and PDFs read it together.
 
 ## Add an item
 
-Open `src/data/menu.ts` and copy one `dish(...)` entry. The helper accepts, in order: unique ID, category ID, localized name, localized ingredients, weight, allergen IDs, numeric price, numeric order.
+Open `src/data/menu.ts` and copy one `dish(...)` entry. The helper accepts, in order: unique ID, category ID, immutable waiter code, localized name, localized ingredients, weight, allergen IDs, numeric price, numeric order.
 
 ```ts
-dish('new-salad', 'salads',
+dish('new-salad', 'salads', 'SA04',
   l('New salad', 'Нова салата', 'Neuer Salat'),
   l('Tomato and cheese.', 'Домат и сирење.', 'Tomate und Käse.'),
   '300 g', ['dairy'], 250, 40),
@@ -33,7 +33,7 @@ The web budget uses the longest ingredient translation. Very long text can grow 
 
 ## Add a language
 
-Add its code to `languages` / `Language` and `Localized` in `types.ts`; add complete UI strings, translations on all menu/category/allergen records, a selector option, browser detection, and a local font subset if needed. `generate:menu` iterates `languages` automatically. Add filename, rendering and detection tests. Existing `localize` supplies English fallback for untranslated optional fields. Do not advertise a new language until its UI and critical allergy text are reviewed.
+Add its code to `languages` / `Language` and `Localized` in `types.ts`; add complete UI strings, translations on all menu/category/allergen records, a selector option, browser detection, and a local font subset if needed. Add the new code to the PDF generator’s `secondaryLanguages` list; `generate:menu` maintains legacy language aliases automatically. Add filename, rendering and detection tests. Existing `localize` supplies English fallback for untranslated optional fields. Do not advertise a new language until its UI and critical allergy text are reviewed.
 
 ## Currency
 
@@ -41,7 +41,7 @@ Change `restaurant.currency` in `src/config/restaurant.ts`. The numeric values m
 
 ## Styling
 
-Web colors/fonts are tokens at the start of `src/styles/main.css`; `.menu-page`, `.dish` and the page-turn rules control the paper presentation. Zoom is relative text sizing. PDF fonts, A4 dimensions, margins, row measurements and price boxes are in `scripts/generate-menu-pdf.ts`. PDFs and web share page grouping and icon artwork. Print adds an unnumbered vector-logo cover, a right-hand price column and a final allergen legend. Inner pages use the small architectural mark. The cover does not change the shared dish-page numbering. Branding assets and regeneration instructions are in `public/branding/README.md`.
+Web colors/fonts are tokens at the start of `src/styles/main.css`; `.menu-page`, `.dish` and the page-turn rules control the paper presentation. Zoom is relative text sizing. PDF fonts, A4 dimensions, margins, row measurements and price boxes are in `scripts/generate-menu-pdf.ts`. PDFs and web share item codes, category order and icon artwork. Print pagination independently measures all translation rows. Print adds an unnumbered vector-logo cover, a right-hand price column and a final allergen legend. Inner pages use the small architectural mark. The cover is unnumbered; print and screen page numbers may differ. Branding assets and regeneration instructions are in `public/branding/README.md`.
 
 ## Regenerate and verify
 
@@ -52,13 +52,21 @@ npm run build
 npm run test:e2e
 ```
 
-Open all three files in `public/menu/`. Check every page: text, Cyrillic, German accents, headings, weights, allergens, page breaks, right-hand prices and footer. PDFs are searchable vector text. If Poppler is installed, render all pages for inspection:
+Open `public/menu/menu-multilingual.pdf`. Check every page: text, Cyrillic, German accents, headings, weights, allergens, page breaks, right-hand prices and footer. PDFs are searchable vector text. If Poppler is installed, render all pages for inspection:
 
 ```sh
 mkdir -p tmp/pdfs
-pdftoppm -png -scale-to 1200 public/menu/menu-mk.pdf tmp/pdfs/mk
-pdftoppm -png -scale-to 1200 public/menu/menu-en.pdf tmp/pdfs/en
-pdftoppm -png -scale-to 1200 public/menu/menu-de.pdf tmp/pdfs/de
+pdftoppm -png -scale-to 1200 public/menu/menu-multilingual.pdf tmp/pdfs/menu
 ```
 
 Check the browser at phone width, switch languages, navigate categories, and use the three-dot download. Commit edited source and regenerated PDFs together. Never manually edit the generated PDF as a replacement for source changes.
+
+## Bilingual screen and multilingual print
+
+Macedonian names and category labels are canonical and always visible. The menu selector changes only the secondary name (EN/DE/EL/SR/SQ), independently of the site's existing language selector. All six names appear once per item in the single `public/menu/menu-multilingual.pdf`; legacy download paths contain identical copies. Prices appear only in print.
+
+Keep `code` immutable after publication, even if an item is reordered or recategorized. Codes are explicit data, never derived from an array index. Prefixes: SA, LP, TP, SK, SS, RI, DO, DE, BP, ZP, VI, TN. Never reuse a retired code for a different dish.
+
+The 12 canonical category definitions are always retained in the requested order. Empty categories have no shortcut or printed section. Current data has no grill specialties or spirits; do not invent items to fill them. Existing breakfast dishes, tavche and pasta are retained under warm starters as the closest available category; the vegetable platter is under sides. Review these placements if the real restaurant menu gives a different serving context.
+
+New Greek, Serbian and Albanian names live in `src/data/menu-translations.ts` and need native-speaker/owner review. Their ingredient descriptions are intentionally not invented: until supplied, the screen falls back to the existing English description with `lang="en"`. Print uses the original Macedonian ingredient description. Category names and allergen terminology include all six languages. Add missing translations to the canonical item's fields; never clone a dish for a language.

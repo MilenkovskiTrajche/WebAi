@@ -1,6 +1,14 @@
-export const languages = ["mk", "en", "de"] as const;
+export const languages = ["mk", "en", "de", "el", "sr", "sq"] as const;
 export type Language = (typeof languages)[number];
-export type Localized = { en: string; mk?: string; de?: string };
+export type Localized = {
+  en: string;
+  mk?: string;
+  de?: string;
+  el?: string;
+  sr?: string;
+  sq?: string;
+};
+export type SecondaryLanguage = Exclude<Language, "mk">;
 export interface Category {
   id: string;
   name: Localized;
@@ -8,6 +16,7 @@ export interface Category {
   order: number;
 }
 export interface MenuItem {
+  code: string;
   id: string;
   categoryId: string;
   name: Localized;

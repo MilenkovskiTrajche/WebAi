@@ -476,22 +476,7 @@ footer {
   background: #efede4;
   padding: 40px 5.5% 70px;
 }
-.menu-heading {
-  text-align: center;
-  margin-bottom: 28px;
-}
-.menu-heading .eyebrow {
-  justify-content: center;
-  font-size: 9px;
-}
-.menu-heading h1 {
-  font-size: 65px;
-  margin: 14px 0 10px;
-}
-.menu-heading > p:not(.eyebrow) {
-  font-size: 12px;
-  color: var(--muted);
-}
+
 .sample-note {
   display: block;
   font-size: 9px;
@@ -998,15 +983,7 @@ footer {
   .menu-main {
     padding: 30px 4% 45px;
   }
-  .menu-heading h1 {
-    font-size: 54px;
-  }
-  .menu-heading > p:not(.eyebrow) {
-    font-size: 11px;
-  }
-  .menu-heading .eyebrow {
-    font-size: 8px;
-  }
+
   .sample-note {
     font-size: 8px;
   }
@@ -1322,19 +1299,7 @@ footer {
 .footer-main .logo {
   width: 220px;
 }
-.menu-cover-logo {
-  width: 255px;
-  margin: 0 auto 14px;
-}
-.menu-heading .eyebrow {
-  flex-wrap: wrap;
-  justify-content: center;
-  line-height: 1.7;
-}
-.menu-heading h1 {
-  font-size: 48px;
-  margin: 15px 0 8px;
-}
+
 .invitation-mark {
   position: absolute;
   width: 230px;
@@ -1415,12 +1380,7 @@ footer {
   .header .logo {
     width: 165px;
   }
-  .menu-cover-logo {
-    width: 225px;
-  }
-  .menu-heading h1 {
-    font-size: 43px;
-  }
+
   .invitation-mark {
     width: 180px;
     right: 4%;
@@ -1437,5 +1397,205 @@ footer {
   }
   .brand-loading-drawing svg {
     display: none;
+  }
+}
+
+/* A restrained printed ledger: warm paper, copper rules and bilingual hierarchy. */
+.menu-main {
+  padding-top: 22px;
+  background: #e9e2d5;
+  color: #30251d;
+}
+.menu-experience {
+  --ink: #30251d;
+  --muted: #665c50;
+  --paper: #fbf7ee;
+}
+.category-nav {
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 22px;
+  padding-bottom: 5px;
+  border-color: #c3b79e;
+  scrollbar-width: thin;
+}
+.category-nav button {
+  flex: 0 0 auto;
+  text-align: left;
+  padding: 10px 2px;
+  color: #524638;
+}
+.category-nav button[aria-current] {
+  border-color: #9a4c30;
+  color: #30251d;
+}
+.category-nav button span {
+  font-size: 13px;
+}
+.category-nav small {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  margin-top: 3px;
+}
+.menu-toolbar {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #c3b79e;
+  padding: 3px 0 10px;
+}
+.menu-language-select {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.menu-language-select select {
+  max-width: 130px;
+  font-size: 11px;
+}
+.menu-page {
+  background: #fbf7ee;
+  border-top: 3px double #a8997d;
+}
+.page-running {
+  color: #675847;
+  border-color: #ccbea5;
+  letter-spacing: 0.1em;
+}
+.menu-section-label {
+  text-align: center;
+  font-size: 0.56em;
+  letter-spacing: 0.26em;
+  color: #786046;
+  margin: 20px 0 8px;
+}
+.menu-category h2 {
+  font-size: 1.85em;
+  margin: 0;
+  line-height: 1.16;
+  font-weight: 600;
+  color: #30251d;
+}
+.category-translation {
+  text-align: center;
+  font-size: 0.78em;
+  margin: 6px 0 0;
+  color: #665c50;
+}
+.category-flourish {
+  color: #9a4c30;
+  font-size: 0.5em;
+  gap: 10px;
+  margin: 14px 0 22px;
+}
+.category-flourish span {
+  background: #bca888;
+  width: 34px;
+}
+.category-grill h2,
+.category-grill-specialties h2 {
+  color: #854128;
+}
+.dish {
+  padding: 0 0 19px;
+  margin-bottom: 19px;
+  border-bottom: 1px solid #e1d6c3;
+}
+.dish h3 {
+  font-size: 1.24em;
+  line-height: 1.3;
+  font-weight: 600;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}
+.dish-code {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.5em;
+  letter-spacing: 0.06em;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 9px;
+  color: #785c3c;
+}
+.dish .dish-translation {
+  font-size: 0.85em;
+  line-height: 1.45;
+  margin: 0 0 8px;
+  color: #55483b;
+}
+.dish .dish-description {
+  font-size: 0.72em;
+  color: #6b6054;
+  line-height: 1.65;
+}
+.dish-details {
+  margin-top: 10px;
+  color: #665747;
+}
+.category-sides .dish h3,
+.category-desserts .dish h3 {
+  font-weight: 500;
+}
+@media (max-width: 600px) {
+  .menu-main {
+    padding: 14px 12px 40px;
+  }
+  .category-nav {
+    gap: 20px;
+    margin-bottom: 9px;
+  }
+  .menu-toolbar {
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+  }
+  .menu-toolbar .tools {
+    justify-content: center;
+    width: 100%;
+  }
+  .tools > .menu-language-select {
+    margin-left: 3px;
+    padding: 0 7px;
+  }
+  .menu-language-select select {
+    max-width: 112px;
+  }
+  .book-viewport {
+    padding: 16px 3px 18px;
+  }
+  .menu-page {
+    padding: 20px 21px;
+  }
+  .menu-category h2 {
+    font-size: 1.65em;
+  }
+  .dish h3 {
+    font-size: 1.2em;
+  }
+}
+.menu-page,
+.page-content {
+  min-width: 0;
+}
+.menu-category h2,
+.dish-translation,
+.category-translation {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .tools .icon-button,
+  .tools .zoom-value {
+    width: 36px;
+    min-width: 36px;
+  }
+  .tools > .menu-language-select {
+    padding: 0 4px;
+    gap: 4px;
+  }
+  .menu-language-select select {
+    max-width: 90px;
   }
 }

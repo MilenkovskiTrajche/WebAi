@@ -1,4 +1,4 @@
-export const strings = {
+const baseStrings = {
   en: {
     home: "Home",
     menu: "The menu",
@@ -211,5 +211,12 @@ export const strings = {
     menuBook: "Interaktive Speisekarte",
     readMenu: "Speisekarte ansehen",
   },
+};
+// Full-site copy remains in the existing three languages; new menu languages use English controls.
+export const strings = {
+  ...baseStrings,
+  el: baseStrings.en,
+  sr: baseStrings.en,
+  sq: baseStrings.en,
 };
 export type Strings = typeof strings.en;

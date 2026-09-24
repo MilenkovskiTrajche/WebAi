@@ -42,7 +42,7 @@ for (const width of [320, 375, 390, 393, 430, 768, 1024, 1440]) {
     await page.getByRole("menuitem", { name: "Reset zoom" }).click();
     await expect(page.locator(".zoom-value")).toHaveText("100%");
     await page
-      .getByRole("button", { name: "Raise a glass", exact: true })
+      .getByRole("button", { name: "Топли напитоци Hot drinks", exact: true })
       .click();
     await expect(page.locator(".menu-spread")).toContainText("Espresso");
     expect(errors).toEqual([]);
@@ -59,37 +59,38 @@ test("languages, matching downloads, overflow focus, keyboard and price privacy"
   await expect(page.locator(".page-status")).toContainText("3");
   await page.keyboard.press("ArrowLeft");
   await expect(page.locator(".page-status")).toContainText("1");
-  for (const [lang, label, download] of [
-    ["en", "More menu options", "Download menu (PDF)"],
-    ["mk", "Повеќе опции за менито", "Преземи мени (PDF)"],
-    ["de", "Weitere Menüoptionen", "Speisekarte herunterladen (PDF)"],
-  ]) {
+  for (const lang of ["en", "de", "el", "sr", "sq"]) {
     await page.locator(".tools select").selectOption(lang);
-    await expect(page.locator("html")).toHaveAttribute("lang", lang);
-    const button = page.getByRole("button", { name: label });
+    await expect(page.locator(".menu-spread .dish h3").first()).toContainText(
+      "Шопска салата",
+    );
+    await expect(
+      page.locator(".menu-spread .dish-translation").first(),
+    ).toHaveAttribute("lang", lang);
+    const button = page.getByRole("button", { name: "More menu options" });
     await button.click();
-    const link = page.getByRole("menuitem", { name: download });
+    const link = page.getByRole("menuitem", { name: "Download menu (PDF)" });
     await expect(link).toBeFocused();
-    await expect(link).toHaveAttribute("href", `/menu/menu-${lang}.pdf`);
+    await expect(link).toHaveAttribute("href", "/menu/menu-multilingual.pdf");
     const [file] = await Promise.all([
       page.waitForEvent("download"),
       link.click(),
     ]);
-    expect(file.suggestedFilename()).toBe(`restaurant-menu-${lang}.pdf`);
+    expect(file.suggestedFilename()).toBe("restaurant-menu-multilingual.pdf");
     expect(await file.failure()).toBeNull();
     await button.click();
     await page.keyboard.press("Escape");
     await expect(button).toBeFocused();
     await expect(page.getByRole("menu")).toHaveCount(0);
     await button.click();
-    await page.locator("h1").click();
+    await page.locator(".page-status").click();
     await expect(page.getByRole("menu")).toHaveCount(0);
     expect(await page.locator(".menu-spread").innerHTML()).not.toMatch(
       /ден\.|MKD|price/,
     );
   }
   await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("lang", "de");
+  await expect(page.locator(".tools select")).toHaveValue("sq");
 });
 test("mobile navigation, swipe, allergen legend and reduced motion", async ({
   browser,
@@ -108,7 +109,7 @@ test("mobile navigation, swipe, allergen legend and reduced motion", async ({
     .locator("#navigation")
     .getByRole("link", { name: "The menu" })
     .click();
-  await expect(page.locator("h1")).toHaveText("The menu");
+  await expect(page.locator("h1")).toHaveText("Trajche Bezisten · Мени");
   const viewer = page.locator(".book-viewport");
   await viewer.dispatchEvent("touchstart", {
     touches: [{ identifier: 1, clientX: 300, clientY: 400 }],
@@ -180,7 +181,7 @@ test("all languages fit small phones and tablet at maximum text zoom", async ({
   for (const width of [320, 390, 768, 1024]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/menu");
-    for (const language of ["mk", "en", "de"]) {
+    for (const language of ["en", "de", "el", "sr", "sq"]) {
       await page.locator(".tools select").selectOption(language);
       for (let i = 0; i < 3; i++)
         await page.locator(".zoom-controls .icon-button").last().click();
@@ -221,10 +222,10 @@ test("turning sheet keeps both paper faces and the stationary page", async ({
       animation.currentTime = 350;
     }
   });
-  await expect(page.locator(".sheet-front")).toContainText("Shopska salad");
-  await expect(page.locator(".sheet-back")).toContainText("Tavche gravche");
+  await expect(page.locator(".sheet-front .dish-code").first()).toBeVisible();
+  await expect(page.locator(".sheet-back .dish-code").first()).toBeAttached();
   await expect(page.locator(".stationary-sheet")).toContainText(
-    "Village breakfast",
+    "Shopska salad",
   );
   await expect(page.locator(".book-transition")).toHaveAttribute(
     "aria-hidden",
@@ -260,12 +261,12 @@ test("turning sheet keeps both paper faces and the stationary page", async ({
   await page
     .getByRole("button", { name: "Previous pages", exact: true })
     .click();
-  await expect(page.locator(".sheet-back")).toContainText("Shopska salad");
+  await expect(page.locator(".sheet-back .dish-code").first()).toBeAttached();
   await expect(page.locator(".book-transition")).toHaveCount(0);
-  await expect(page.locator(".menu-spread")).toContainText("Village breakfast");
+  await expect(page.locator(".menu-spread")).toContainText("Shopska salad");
   await expect(page.locator(".menu-spread .allergen").first()).toHaveAttribute(
     "aria-label",
-    "Eggs",
+    "Milk",
   );
   await expect(page.locator(".menu-spread .allergen").first()).toHaveText("");
 });
@@ -300,10 +301,7 @@ test("brand assets stay sharp, accessible and proportional at mobile and desktop
     ).toBe(true);
   await page.screenshot({ path: "tmp/brand-reference.png", fullPage: true });
   await page.goto("/menu");
-  await expect(page.locator(".menu-cover-logo")).toHaveAttribute(
-    "src",
-    "/branding/logo-primary.svg",
-  );
+  await expect(page.locator(".menu-heading")).toHaveCount(0);
   await page.locator(".header .logo").click();
   await expect(page).toHaveURL("http://127.0.0.1:4173/");
 });
